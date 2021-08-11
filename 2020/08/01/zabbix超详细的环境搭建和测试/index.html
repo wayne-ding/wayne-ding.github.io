@@ -6,7 +6,7 @@
     <meta name="referrer" content="origin">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta http-equiv="Cache-Control" content="no-siteapp">
-    <title>归档</title>
+    <title>zabbix教程</title>
 
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css">
@@ -17,62 +17,146 @@
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.css">
 
-    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/archive.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.css">
+    
+        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/normal.css">
+    
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js"></script>
+
 <meta name="generator" content="Hexo 5.4.0"></head>
 <body>
     <a id="cover"></a>
     <div id="header">
-    <div class="header" >
+    <div class="header">
         <div class="vertical">
             <div class="inner">
-                <h1 class="header-title"></h1>
-                <h2 class="header-description" id="hitokoto"></h2>
-                <h3 class="header-info" id="hitokotoAuthor"></h3>
-                <!--
-                <h1 class="header-subtitle"></h1>
-                <p class="header-subinfo"></p>
-                -->
+                <h1 class="header-subtitle">zabbix教程</h1>
+                <div class="header-subinfo">
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2020-08-01
+                        </span>
+                        
+                            <span id="/2020/08/01/zabbix超详细的环境搭建和测试/" class="leancloud_visitors" data-flag-title="zabbix教程">
+                                <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
+                            </span>
+                        
+                        <span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/08/01/zabbix超详细的环境搭建和测试/"></span>
+                        </span>  
+                    </p>                 
+                </div>
             </div>
         </div>
-        <a class="scroll-down" href="javascript:;" target="_self" data-offset="-45">
-            <span class="hidden">Scroll Down</span>
-            <i class="scroll-down-icon iconfont icon-return"></i>
-        </a>
+        <canvas id="articleHeaderCanvas"></canvas>
     </div>
 </div>
     <div id="container">
     <div id="content">
-          
-    <div class="articles-year">
-        <h2>2020</h2>
-        <ul class="list">
+        <div id="article">
+    <div class="toc"></div>
+    <div class="article-body">
+        <h3 id="一、系统环境准备"><a href="#一、系统环境准备" class="headerlink" title="一、系统环境准备"></a>一、系统环境准备</h3><p>1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件<br>2、安装前关闭selinux和firewall #ps:关闭防火墙并设置开机不启动(生产环境慎用，可以选择开放对应的端口，默认为tcp/udp 10050、10051)</p>
+<ol>
+<li>setenforce 0</li>
+<li>sed -i “s/SELINUX=enforcing/SELINUX=disabled/g” /etc/selinux/config 3. systemctl stop firewalld.service</li>
+<li>systemctl disable firewalld.service<h3 id="二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源"><a href="#二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源" class="headerlink" title="二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源"></a>二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源</h3>进行这一步之后，/etc/yum.repos.d 目录下会生成 zabbix.repo 文件，即可正常使用zabbix源</li>
+<li>rpm -Uvh <a target="_blank" rel="noopener" href="https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm">https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm</a><pre><code> 1. yum clean all
+</code></pre>
+</li>
+<li>yum makecache fast<h1 id="2、安装zabbix服务端组件"><a href="#2、安装zabbix服务端组件" class="headerlink" title="2、安装zabbix服务端组件"></a>2、安装zabbix服务端组件</h1></li>
+<li>yum -y install zabbix-server-mysql zabbix-web-mysql zabbix-get<br>会比较慢，耐心等待即可<h1 id="3、安装zabbix前端组件"><a href="#3、安装zabbix前端组件" class="headerlink" title="3、安装zabbix前端组件"></a>3、安装zabbix前端组件</h1></li>
+<li>yum -y install centos-release-scl<br>//这个过程需要从zabbix服务器下载组件，<br>编辑配置文件 /etc/yum.repos.d/zabbix.repo，找到下图所示字段，并设置为1(1-启用;0-不启用)启用前端，保存并 退出文件</li>
+<li>vi /etc/yum.repos.d/zabbix.repo<h1 id="4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页"><a href="#4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页" class="headerlink" title="4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页"></a>4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页</h1></li>
+<li>yum -y install zabbix-web-mysql-scl zabbix-apache-conf-scl //这个过程需要从zabbix服务器下载组件，会比 较慢，耐心等待即可<h3 id="三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"><a href="#三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库" class="headerlink" title="三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"></a>三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库</h3></li>
+<li>rpm -ivh <a target="_blank" rel="noopener" href="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm">https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm</a> 2、安装MySQL数据库组件</li>
+<li>yum -y install yum-utils</li>
+<li>yum-config-manager –disable mysql80-community</li>
+<li>yum-config-manager –enable mysql57-community</li>
+<li>yum install mysql-community-server -y //这个过程需要从MySQL服务器下载组件，会比较慢，耐心等待即 可<h1 id="3、运行MySQL并设置开机自启动"><a href="#3、运行MySQL并设置开机自启动" class="headerlink" title="3、运行MySQL并设置开机自启动"></a>3、运行MySQL并设置开机自启动</h1></li>
+<li>systemctl start mysqld //首次启动MySQL比较慢，耐心等待即可</li>
+<li>systemctl enable mysqld<h1 id="4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"><a href="#4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码" class="headerlink" title="4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"></a>4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码</h1></li>
+<li>grep ‘temporary password’ /var/log/mysqld.log</li>
+<li>mysql -uroot -p’t8H/Dsf2FP0h’ //这里要将刚才查到的临时密码用英文格式单引号引起来</li>
+<li>ALTER USER ‘root‘@’localhost’ IDENTIFIED BY ‘123456@Ab’; 员root密码，自行设置即可</li>
+<li>create database zabbix character set utf8 collate utf8_bin;</li>
+<li>create user zabbix@localhost identified by ‘Zabbix@123’; （单引号内修改为自己设置的密码)</li>
+<li>grant all privileges on zabbix.* to zabbix@localhost; 管理权限</li>
+<li>quit; //退出数据库命令行<br>//单引号内为需要设置的MySQL超级管理 //创建zabbix数据库<br>//创建zabbix数据库用户，并设置密码(单 //设置zabbix用户对zabbix数据库具有本地</li>
+</ol>
+<h2 id="6、导入zabbix初始数据库"><a href="#6、导入zabbix初始数据库" class="headerlink" title="6、导入zabbix初始数据库"></a>6、导入zabbix初始数据库</h2><ol>
+<li>zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p‘Zabbix@123’ zabbix //单引号内<br>为刚才设置的zabbix数据库用户密码，这一步耗时比较长，耐心等待即可<h3 id="四、zabbix配置初始化-1、配置数据库连接信息"><a href="#四、zabbix配置初始化-1、配置数据库连接信息" class="headerlink" title="四、zabbix配置初始化 1、配置数据库连接信息"></a>四、zabbix配置初始化 1、配置数据库连接信息</h3>编辑配置文件 /etc/zabbix/zabbix_server.conf，找到以下字段，去掉前面的#号，填入正确的zabbix数据库连接信息，保 存并退出文件</li>
+<li>DBHost=localhost</li>
+<li>DBName=zabbix</li>
+<li>DBUser=zabbix</li>
+<li>DBPassword=Zabbix@123<h1 id="2、配置时区信息"><a href="#2、配置时区信息" class="headerlink" title="2、配置时区信息"></a>2、配置时区信息</h1>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf，找到php_value[date.timezone] =<br>号，并填入上海时区</li>
+<li>php_value[date.timezone] = Asia/Shanghai<h1 id="3、配置字体，避免前台监控图形中文乱码"><a href="#3、配置字体，避免前台监控图形中文乱码" class="headerlink" title="3、配置字体，避免前台监控图形中文乱码"></a>3、配置字体，避免前台监控图形中文乱码</h1></li>
+<li>yum -y install wqy-microhei-fonts</li>
+<li>mv /usr/share/fonts/dejavu/DejaVuSans.ttf /usr/share/fonts/dejavu/DejaVuSans.ttf.bak</li>
+<li>cp -f /usr/share/fonts/wqy-microhei/wqy-microhei.ttc /usr/share/fonts/dejavu/DejaVuSans.ttf<h1 id="4、启动zabbix相关服务并设置开机自启动"><a href="#4、启动zabbix相关服务并设置开机自启动" class="headerlink" title="4、启动zabbix相关服务并设置开机自启动"></a>4、启动zabbix相关服务并设置开机自启动</h1></li>
+<li>systemctl restart zabbix-server httpd rh-php72-php-fpm</li>
+<li>systemctl enable zabbix-server httpd rh-php72-php-fpm 5、浏览器上访问前端，进行初始化安装<br>访问<a target="_blank" rel="noopener" href="http://ip/zabbix%EF%BC%8C%E8%BF%9B%E5%85%A5%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AE%89%E8%A3%85%E7%95%8C%E9%9D%A2">http://ip/zabbix，进入初始化安装界面</a></li>
+</ol>
+<p>这一步结束后，初始化完成，并进入登录界面，默认用户名是Admin，密码是zabbix，登录后请及时修改密码<br> 进入系统后，默认是英文显示，点击左下角User settings，设置语言为中文即可<br>到此，zabbix5.0的服务器搭建完成，服务已经正常运行，如果要管理客户机，还需要在客户机安装agent，具体安装方法请点击:<a target="_blank" rel="noopener" href="https://mediaman-my.sharepoint.cn/:b:/g/personal/wayne_ding_mediaman_com_cn/EWDHmesIs2FClr5nJLVHXcYBGScapZ4iTXEOz0ZPOaq0CA?e=hfmb0Q">安装zabbix-agent客户端并在zabbix平台添加客户机</a></p>
+
+        <p class="suffix-end">__END__</p>
+        <div class="suffix-box">
+            <div class="suffix-box-left">
+                <img src="https://mediaman-share.oss-cn-shanghai.aliyuncs.com/wayne.jpeg" alt="Wayne Blog">
+            </div>
+            <div class="suffix-box-right">
+                <span class="suffix-box-title">文章作者</span>：Wayne Blog
+                <br>
+                <span class="suffix-box-title">文章出处</span>：<a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" target="_blank">zabbix教程</a>
+                <br>
+                <span class="suffix-box-title">作者签名</span>：简单地活着, 肆意又精彩.
+                <br>
+                <span class="suffix-box-title">关于主题</span>：<a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+                <br>
+                <span class="suffix-box-title">版权声明</span>：文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+                <br>
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+    <div class="article-footer">
+        
+            <div class="category">
+                分类：
+                
+                    <a href="/categories/Web/">Web</a>
+                
+            </div>
+        
+        
+            <div class="tag">
+                标签：
+                
+                    <a href="/tags/zabbix/">zabbix</a>
+                
+            </div>
+        
+        <div class="article-prev-next">
             
-                <li>
-                    <span class="date">2020/08/01</span>
-                    <a href="/2020/08/01/%E4%BD%A0%E4%BB%AC%E8%A6%81%E7%9A%84nginx%E6%95%99%E7%A8%8B/" title="nginx教程">    
-                        <span>nginx教程</span>
-                    </a>
-                </li>
+                <a href="/2020/08/01/%E4%BD%A0%E4%BB%AC%E8%A6%81%E7%9A%84nginx%E6%95%99%E7%A8%8B/" class="prev-prefix">« </a> 上一篇：    <a href="/2020/08/01/%E4%BD%A0%E4%BB%AC%E8%A6%81%E7%9A%84nginx%E6%95%99%E7%A8%8B/" title="发布于 2020-08-01 12:00">nginx教程</a>
+                <br>
             
-                <li>
-                    <span class="date">2020/08/01</span>
-                    <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" title="zabbix教程">    
-                        <span>zabbix教程</span>
-                    </a>
-                </li>
             
-                <li>
-                    <span class="date">2020/01/01</span>
-                    <a href="/2020/01/01/software-download/" title="software download">    
-                        <span>software download</span>
-                    </a>
-                </li>
+                <a href="/2020/01/01/software-download/" class="next-prefix">» </a> 下一篇：    <a href="/2020/01/01/software-download/" title="发布于 2020-01-01 12:00">software download</a>
             
-        </ul>
+        </div>
+    </div>
+    
+    <div class="article-comments">
+        <div class="comments-title">
+            评论列表
+        </div>
+        <div class="comments-content">
+        </div>
     </div>
 
+</div>
 
     </div>
 </div>
