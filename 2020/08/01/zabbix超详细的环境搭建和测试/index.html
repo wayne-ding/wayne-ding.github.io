@@ -57,26 +57,25 @@
         <div id="article">
     <div class="toc"></div>
     <div class="article-body">
-        <h3 id="一、系统环境准备"><a href="#一、系统环境准备" class="headerlink" title="一、系统环境准备"></a>一、系统环境准备</h3><p>1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件<br>2、安装前关闭selinux和firewall #ps:关闭防火墙并设置开机不启动(生产环境慎用，可以选择开放对应的端口，默认为tcp/udp 10050、10051)</p>
-<ol>
+        <h1 id="一、系统环境准备"><a href="#一、系统环境准备" class="headerlink" title="一、系统环境准备"></a>一、系统环境准备</h1><h3 id="1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件"><a href="#1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件" class="headerlink" title="1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件"></a>1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件</h3><h3 id="2、安装前关闭selinux和firewall-ps-关闭防火墙并设置开机不启动-生产环境慎用，可以选择开放对应的端口，默认为tcp-udp-10050、10051"><a href="#2、安装前关闭selinux和firewall-ps-关闭防火墙并设置开机不启动-生产环境慎用，可以选择开放对应的端口，默认为tcp-udp-10050、10051" class="headerlink" title="2、安装前关闭selinux和firewall #ps:关闭防火墙并设置开机不启动(生产环境慎用，可以选择开放对应的端口，默认为tcp/udp 10050、10051)"></a>2、安装前关闭selinux和firewall #ps:关闭防火墙并设置开机不启动(生产环境慎用，可以选择开放对应的端口，默认为tcp/udp 10050、10051)</h3><ol>
 <li>setenforce 0</li>
 <li>sed -i “s/SELINUX=enforcing/SELINUX=disabled/g” /etc/selinux/config 3. systemctl stop firewalld.service</li>
-<li>systemctl disable firewalld.service<h3 id="二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源"><a href="#二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源" class="headerlink" title="二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源"></a>二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源</h3>进行这一步之后，/etc/yum.repos.d 目录下会生成 zabbix.repo 文件，即可正常使用zabbix源</li>
+<li>systemctl disable firewalld.service<h1 id="二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源"><a href="#二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源" class="headerlink" title="二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源"></a>二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源</h1>进行这一步之后，/etc/yum.repos.d 目录下会生成 zabbix.repo 文件，即可正常使用zabbix源</li>
 <li>rpm -Uvh <a target="_blank" rel="noopener" href="https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm">https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm</a><pre><code> 1. yum clean all
 </code></pre>
 </li>
-<li>yum makecache fast<h1 id="2、安装zabbix服务端组件"><a href="#2、安装zabbix服务端组件" class="headerlink" title="2、安装zabbix服务端组件"></a>2、安装zabbix服务端组件</h1></li>
-<li>yum -y install zabbix-server-mysql zabbix-web-mysql zabbix-get<br>会比较慢，耐心等待即可<h1 id="3、安装zabbix前端组件"><a href="#3、安装zabbix前端组件" class="headerlink" title="3、安装zabbix前端组件"></a>3、安装zabbix前端组件</h1></li>
+<li>yum makecache fast<h3 id="2、安装zabbix服务端组件"><a href="#2、安装zabbix服务端组件" class="headerlink" title="2、安装zabbix服务端组件"></a>2、安装zabbix服务端组件</h3></li>
+<li>yum -y install zabbix-server-mysql zabbix-web-mysql zabbix-get<br>会比较慢，耐心等待即可<h3 id="3、安装zabbix前端组件"><a href="#3、安装zabbix前端组件" class="headerlink" title="3、安装zabbix前端组件"></a>3、安装zabbix前端组件</h3></li>
 <li>yum -y install centos-release-scl<br>//这个过程需要从zabbix服务器下载组件，<br>编辑配置文件 /etc/yum.repos.d/zabbix.repo，找到下图所示字段，并设置为1(1-启用;0-不启用)启用前端，保存并 退出文件</li>
-<li>vi /etc/yum.repos.d/zabbix.repo<h1 id="4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页"><a href="#4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页" class="headerlink" title="4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页"></a>4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页</h1></li>
-<li>yum -y install zabbix-web-mysql-scl zabbix-apache-conf-scl //这个过程需要从zabbix服务器下载组件，会比 较慢，耐心等待即可<h3 id="三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"><a href="#三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库" class="headerlink" title="三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"></a>三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库</h3></li>
+<li>vi /etc/yum.repos.d/zabbix.repo<h3 id="4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页"><a href="#4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页" class="headerlink" title="4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页"></a>4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页</h3></li>
+<li>yum -y install zabbix-web-mysql-scl zabbix-apache-conf-scl //这个过程需要从zabbix服务器下载组件，会比 较慢，耐心等待即可<h1 id="三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"><a href="#三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库" class="headerlink" title="三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"></a>三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库</h1></li>
 <li>rpm -ivh <a target="_blank" rel="noopener" href="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm">https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm</a> 2、安装MySQL数据库组件</li>
 <li>yum -y install yum-utils</li>
 <li>yum-config-manager –disable mysql80-community</li>
 <li>yum-config-manager –enable mysql57-community</li>
-<li>yum install mysql-community-server -y //这个过程需要从MySQL服务器下载组件，会比较慢，耐心等待即 可<h1 id="3、运行MySQL并设置开机自启动"><a href="#3、运行MySQL并设置开机自启动" class="headerlink" title="3、运行MySQL并设置开机自启动"></a>3、运行MySQL并设置开机自启动</h1></li>
+<li>yum install mysql-community-server -y //这个过程需要从MySQL服务器下载组件，会比较慢，耐心等待即 可<h3 id="3、运行MySQL并设置开机自启动"><a href="#3、运行MySQL并设置开机自启动" class="headerlink" title="3、运行MySQL并设置开机自启动"></a>3、运行MySQL并设置开机自启动</h3></li>
 <li>systemctl start mysqld //首次启动MySQL比较慢，耐心等待即可</li>
-<li>systemctl enable mysqld<h1 id="4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"><a href="#4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码" class="headerlink" title="4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"></a>4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码</h1></li>
+<li>systemctl enable mysqld<h3 id="4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"><a href="#4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码" class="headerlink" title="4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"></a>4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码</h3></li>
 <li>grep ‘temporary password’ /var/log/mysqld.log</li>
 <li>mysql -uroot -p’t8H/Dsf2FP0h’ //这里要将刚才查到的临时密码用英文格式单引号引起来</li>
 <li>ALTER USER ‘root‘@’localhost’ IDENTIFIED BY ‘123456@Ab’; 员root密码，自行设置即可</li>
@@ -85,16 +84,16 @@
 <li>grant all privileges on zabbix.* to zabbix@localhost; 管理权限</li>
 <li>quit; //退出数据库命令行<br>//单引号内为需要设置的MySQL超级管理 //创建zabbix数据库<br>//创建zabbix数据库用户，并设置密码(单 //设置zabbix用户对zabbix数据库具有本地</li>
 </ol>
-<h2 id="6、导入zabbix初始数据库"><a href="#6、导入zabbix初始数据库" class="headerlink" title="6、导入zabbix初始数据库"></a>6、导入zabbix初始数据库</h2><ol>
-<li>zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p‘Zabbix@123’ zabbix //单引号内<br>为刚才设置的zabbix数据库用户密码，这一步耗时比较长，耐心等待即可<h3 id="四、zabbix配置初始化-1、配置数据库连接信息"><a href="#四、zabbix配置初始化-1、配置数据库连接信息" class="headerlink" title="四、zabbix配置初始化 1、配置数据库连接信息"></a>四、zabbix配置初始化 1、配置数据库连接信息</h3>编辑配置文件 /etc/zabbix/zabbix_server.conf，找到以下字段，去掉前面的#号，填入正确的zabbix数据库连接信息，保 存并退出文件</li>
+<h3 id="6、导入zabbix初始数据库"><a href="#6、导入zabbix初始数据库" class="headerlink" title="6、导入zabbix初始数据库"></a>6、导入zabbix初始数据库</h3><ol>
+<li>zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p‘Zabbix@123’ zabbix //单引号内<br>为刚才设置的zabbix数据库用户密码，这一步耗时比较长，耐心等待即可<h1 id="四、zabbix配置初始化-1、配置数据库连接信息"><a href="#四、zabbix配置初始化-1、配置数据库连接信息" class="headerlink" title="四、zabbix配置初始化 1、配置数据库连接信息"></a>四、zabbix配置初始化 1、配置数据库连接信息</h1>编辑配置文件 /etc/zabbix/zabbix_server.conf，找到以下字段，去掉前面的#号，填入正确的zabbix数据库连接信息，保 存并退出文件</li>
 <li>DBHost=localhost</li>
 <li>DBName=zabbix</li>
 <li>DBUser=zabbix</li>
-<li>DBPassword=Zabbix@123<h1 id="2、配置时区信息"><a href="#2、配置时区信息" class="headerlink" title="2、配置时区信息"></a>2、配置时区信息</h1>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf，找到php_value[date.timezone] =<br>号，并填入上海时区</li>
-<li>php_value[date.timezone] = Asia/Shanghai<h1 id="3、配置字体，避免前台监控图形中文乱码"><a href="#3、配置字体，避免前台监控图形中文乱码" class="headerlink" title="3、配置字体，避免前台监控图形中文乱码"></a>3、配置字体，避免前台监控图形中文乱码</h1></li>
+<li>DBPassword=Zabbix@123<h3 id="2、配置时区信息"><a href="#2、配置时区信息" class="headerlink" title="2、配置时区信息"></a>2、配置时区信息</h3>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf，找到php_value[date.timezone] =<br>号，并填入上海时区</li>
+<li>php_value[date.timezone] = Asia/Shanghai<h3 id="3、配置字体，避免前台监控图形中文乱码"><a href="#3、配置字体，避免前台监控图形中文乱码" class="headerlink" title="3、配置字体，避免前台监控图形中文乱码"></a>3、配置字体，避免前台监控图形中文乱码</h3></li>
 <li>yum -y install wqy-microhei-fonts</li>
 <li>mv /usr/share/fonts/dejavu/DejaVuSans.ttf /usr/share/fonts/dejavu/DejaVuSans.ttf.bak</li>
-<li>cp -f /usr/share/fonts/wqy-microhei/wqy-microhei.ttc /usr/share/fonts/dejavu/DejaVuSans.ttf<h1 id="4、启动zabbix相关服务并设置开机自启动"><a href="#4、启动zabbix相关服务并设置开机自启动" class="headerlink" title="4、启动zabbix相关服务并设置开机自启动"></a>4、启动zabbix相关服务并设置开机自启动</h1></li>
+<li>cp -f /usr/share/fonts/wqy-microhei/wqy-microhei.ttc /usr/share/fonts/dejavu/DejaVuSans.ttf<h3 id="4、启动zabbix相关服务并设置开机自启动"><a href="#4、启动zabbix相关服务并设置开机自启动" class="headerlink" title="4、启动zabbix相关服务并设置开机自启动"></a>4、启动zabbix相关服务并设置开机自启动</h3></li>
 <li>systemctl restart zabbix-server httpd rh-php72-php-fpm</li>
 <li>systemctl enable zabbix-server httpd rh-php72-php-fpm 5、浏览器上访问前端，进行初始化安装<br>访问<a target="_blank" rel="noopener" href="http://ip/zabbix%EF%BC%8C%E8%BF%9B%E5%85%A5%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AE%89%E8%A3%85%E7%95%8C%E9%9D%A2">http://ip/zabbix，进入初始化安装界面</a></li>
 </ol>
