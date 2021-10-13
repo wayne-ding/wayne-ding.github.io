@@ -82,7 +82,7 @@
 <p>–name ：启运容器分配名字influxdb</p>
 <p>-p ：映射端口，8083端口为infuxdb管理端口，8086端口是infuxdb的数据端口</p>
 <p>tutum/influxdb：通过这个容器来运行的，默认会在docker官方仓库pull下来</p>
-<p>查看容器<br>[root@master ~]# docker ps<br>CONTAINER ID      IMAGE          COMMAND      CREATED           STATUS                   PORTS                      NAMES<br>f2304dad5855   tutum/influxdb   “/run.sh”   4 seconds ago   Up 4 seconds  0.0.0.0:8083-&gt;8083/tcp, 0.0.0.0:8086-&gt;8086/tcp   influxdb<br>现在可以通过浏览器去访问influxdb的管理端了<br><img src="images/1.png"><br>接下来创建cadvisor的数据库与用户，这个用于后期配置granfa</p>
+<p>查看容器<br>[root@master ~]# docker ps<br>CONTAINER ID      IMAGE          COMMAND      CREATED           STATUS                   PORTS                      NAMES<br>f2304dad5855   tutum/influxdb   “/run.sh”   4 seconds ago   Up 4 seconds  0.0.0.0:8083-&gt;8083/tcp, 0.0.0.0:8086-&gt;8086/tcp   influxdb<br>现在可以通过浏览器去访问influxdb的管理端了<br><img src="image/1"><br>接下来创建cadvisor的数据库与用户，这个用于后期配置granfa</p>
 <p>图片</p>
 <p>回车直接创建完成如下图</p>
 <p>图片</p>
