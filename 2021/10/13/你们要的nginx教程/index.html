@@ -6,7 +6,7 @@
     <meta name="referrer" content="origin">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta http-equiv="Cache-Control" content="no-siteapp">
-    <title>nginx教程</title>
+    <title>打造高逼格/可视化的Docker容器监控系统平台教程</title>
 
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css">
@@ -31,19 +31,19 @@
     <div class="header">
         <div class="vertical">
             <div class="inner">
-                <h1 class="header-subtitle">nginx教程</h1>
+                <h1 class="header-subtitle">打造高逼格/可视化的Docker容器监控系统平台教程</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2020-08-01
+                            <i class="iconfont icon-time"></i> 发表时间：2021-10-13
                         </span>
                         
-                            <span id="/2020/08/01/你们要的nginx教程/" class="leancloud_visitors" data-flag-title="nginx教程">
+                            <span id="/2021/10/13/你们要的nginx教程/" class="leancloud_visitors" data-flag-title="打造高逼格/可视化的Docker容器监控系统平台教程">
                                 <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                             </span>
                         
                         <span>
-                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/08/01/你们要的nginx教程/"></span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/10/13/你们要的nginx教程/"></span>
                         </span>  
                     </p>                 
                 </div>
@@ -57,95 +57,70 @@
         <div id="article">
     <div class="toc"></div>
     <div class="article-body">
-        <h2 id="Nginx简介"><a href="#Nginx简介" class="headerlink" title="Nginx简介"></a>Nginx简介</h2><h3 id="1-1-什么是Nginx"><a href="#1-1-什么是Nginx" class="headerlink" title="1.1 什么是Nginx"></a>1.1 什么是Nginx</h3><p>Nginx是一个高性能的http和反向代理服务器，其特点是占用内存小，并发能力强。Nginx专为性能优化而开发，性能是其最重要的考量，能经受高负载的考验，有报告表明能支持高达50000个并发连接数。</p>
-<h3 id="1-2反向代理"><a href="#1-2反向代理" class="headerlink" title="1.2反向代理"></a>1.2反向代理</h3><p>正向代理：在浏览器中配置代理服务器，通过代理服务器进行互联网访问。</p>
-<p>反向代理：将请求发送到反向代理服务器，由反向代理服务器去选择目标服务器获取数据后，再返回给客户端，此时反向代理服务器和目标服务器对外就是一个服务器，暴漏的是代理服务器地址。</p>
-<h3 id="1-3-负载均衡"><a href="#1-3-负载均衡" class="headerlink" title="1.3 负载均衡"></a>1.3 负载均衡</h3><p>如果请求数过大，单个服务器解决不了，我们增加服务器的数量，然后将请求分发到各个服务器上，将原先请求集中到单个服务器的情况改为请求分发到多个服务器上，就是负载均衡。</p>
-<h3 id="1-4-动静分离"><a href="#1-4-动静分离" class="headerlink" title="1.4 动静分离"></a>1.4 动静分离</h3><p>为了加快服务器的解析速度，可以把动态页面和静态页面交给不同的服务器来解析，加快解析速度，降低原来单个服务器的压力。</p>
-<h2 id="二-Nginx的安装"><a href="#二-Nginx的安装" class="headerlink" title="二 Nginx的安装"></a>二 Nginx的安装</h2><p>Nginx需要几个依赖包，分别是pcre，openssl，zlib，在安装nginx之前需要先安装这几个依赖。</p>
-<h3 id="2-1-安装pcre依赖"><a href="#2-1-安装pcre依赖" class="headerlink" title="2.1 安装pcre依赖"></a>2.1 安装pcre依赖</h3><p>使用命令下载pcre压缩包<br>wget <a target="_blank" rel="noopener" href="http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz">http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz</a><br>解压压缩文件<br>tar -xvf pcre-8.37.tar.gz<br>进入解压后的名录，执行以下命令<br>./configure<br>使用以下命令进行编译安装<br>make &amp;&amp; make install<br>查看安装的pcre版本号<br>pcre-config –version</p>
-<h3 id="2-2-安装openssl，zlib等依赖"><a href="#2-2-安装openssl，zlib等依赖" class="headerlink" title="2.2 安装openssl，zlib等依赖"></a>2.2 安装openssl，zlib等依赖</h3><p>yum -y install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel</p>
-<h3 id="2-3-安装nginx"><a href="#2-3-安装nginx" class="headerlink" title="2.3 安装nginx"></a>2.3 安装nginx</h3><p>nginx官网下载nginx，官网地址：<a target="_blank" rel="noopener" href="https://nginx.org/download/%EF%BC%9B">https://nginx.org/download/；</a><br>将压缩包拖到服务器上;<br>使用命令tar -xvf nginx-1.12.2.tar.gz解压压缩包;<br>使用命令./configure检查；<br>使用命令make &amp;&amp; make isntall编译安装；<br>安装成功后，在usr会多出来一个文件夹，local/nginx，在nginx的sbin文件夹下有启动脚本。</p>
-<h3 id="2-4-启动nginx"><a href="#2-4-启动nginx" class="headerlink" title="2.4 启动nginx"></a>2.4 启动nginx</h3><p>在/usr/local/nginx/sbin文件夹下，使用以下命令启动</p>
-<p>./nginx<br>然后浏览器访问服务器ip，nginx默认端口是80，出现以下页面则证明nginx安装成功；</p>
-<h3 id="2-5-Nginx常用的命令"><a href="#2-5-Nginx常用的命令" class="headerlink" title="2.5 Nginx常用的命令"></a>2.5 Nginx常用的命令</h3><p>使用这些命令时需要进入/usr/local/nginx/sbin文件夹</p>
-<p>查看nginx的版本号<br>./nginx -v<br>启动nginx<br>./nginx<br>关闭nginx<br>./nginx -s stop<br>重新加载nginx<br>./nginx -s reload</p>
-<h3 id="2-6-Nginx的配置文件"><a href="#2-6-Nginx的配置文件" class="headerlink" title="2.6 Nginx的配置文件"></a>2.6 Nginx的配置文件</h3><p>nginx的配置文件在/usr/local/nginx/conf中的nginx.conf。我们将nginx.conf中注释的内容删除一下。</p>
-<p>#user  nobody;<br>worker_processes  1;</p>
-<p>#pid        logs/nginx.pid;</p>
-<p>events {<br>    worker_connections  1024;<br>}</p>
-<p>http {<br>    include       mime.types;<br>    default_type  application/octet-stream;</p>
-<pre><code>sendfile        on;
-#tcp_nopush     on;
-
-#keepalive_timeout  0;
-keepalive_timeout  65;
-
-#gzip  on;
-
-server &#123;
-    listen       80;
-    server_name  localhost;
-
-    location / &#123;
-        root   html;
-        index  index.html index.htm;
-    &#125;
-&#125;
-</code></pre>
-<p>}<br>nginx的配置文件包含三部门。</p>
-<h3 id="1-全局块"><a href="#1-全局块" class="headerlink" title="1.全局块"></a>1.全局块</h3><p>从配置文件开始到events块之间的内容，主要会设置一些nginx服务器整体运行的配置指令。</p>
-<p>worker_processes 1;<br>这个代表nginx处理并发的关键配置，值越大，处理并发能力越强。但是会受到硬件、软件等约束。</p>
-<h3 id="2-events块"><a href="#2-events块" class="headerlink" title="2.events块"></a>2.events块</h3><p>events块涉及的指令主要影响nginx服务器与用户网络的连接。</p>
-<p>worker_connections 1024;<br>这个代表nginx支持的最大连接数。</p>
-<h3 id="3-http全局块"><a href="#3-http全局块" class="headerlink" title="3.http全局块"></a>3.http全局块</h3><p>nginx服务器配置最频繁的部分。http全局块包含http块和server块。</p>
-<h2 id="三-Nginx配置反向代理"><a href="#三-Nginx配置反向代理" class="headerlink" title="三 Nginx配置反向代理"></a>三 Nginx配置反向代理</h2><h3 id="3-1-ngix代理流程"><a href="#3-1-ngix代理流程" class="headerlink" title="3.1 ngix代理流程"></a>3.1 ngix代理流程</h3><p>本地浏览器访问nginx服务器，nginx服务器反向代理tomcat服务器，当我们请求nginx的时候直接访问到tomcat。tomcat的安装这里就不在讲了，我将tomcat和nginx安装在了同一台服务器上。</p>
-<h3 id="3-2-配置ip和域名的绑定关系"><a href="#3-2-配置ip和域名的绑定关系" class="headerlink" title="3.2 配置ip和域名的绑定关系"></a>3.2 配置ip和域名的绑定关系</h3><p>由于我们的nginx没有域名，为了演示，因此我们在本地host文件中配置nginx服务器ip和域名进行绑定。这个host文件的具体位置在C:\Windows\System32\drivers\etc。在host文件中增加一句配置：</p>
-<p>47.104.xxx.xxx <a target="_blank" rel="noopener" href="http://www.javatrip.com/">www.javatrip.com</a><br>前面的ip是服务器的ip地址，后面的域名是我随便起的用于绑定这个ip的一个域名。配置好之后，我们使用域名访问一下tomcat，如果能请求到omcat默认页面，则配置成功。</p>
-<h3 id="3-3-在nginx配置请求转发"><a href="#3-3-在nginx配置请求转发" class="headerlink" title="3.3 在nginx配置请求转发"></a>3.3 在nginx配置请求转发</h3><p>  server {<br>        listen       80;<br>        server_name  localhost;</p>
-<pre><code>    location / &#123;
-        root   html;
-        index  index.html index.htm;
-    &#125;
-</code></pre>
-<p>  }<br>我们将以上默认的配置文件做个修改：</p>
-<p>server {<br>    listen       80;<br>    server_name  47.104.xxx.xxx;</p>
-<pre><code>location / &#123;
-    root   html;
-    proxy_pass http://127.0.0.1:8080;
-    index  index.html index.htm;
-&#125;
-</code></pre>
-<p>}<br>以上这段配置的意思就是请求是47.104.xxx.xxx:80，都会转发至47.104.xxx.xxx:8080。</p>
-<p>现在浏览器访问<a target="_blank" rel="noopener" href="http://www.javatrip.com,发现直接转发到了tomcat上了,这样简单的反向代理就完成了./">www.javatrip.com，发现直接转发到了tomcat上了，这样简单的反向代理就完成了。</a></p>
-<h3 id="3-4-根据请求后缀分发"><a href="#3-4-根据请求后缀分发" class="headerlink" title="3.4 根据请求后缀分发"></a>3.4 根据请求后缀分发</h3><p>我们再解压一个tomcat，端口号设置为8081，分别在两个tomcat下webapps目录下面新建dev和prod目录，然后在该目录下写一个文件。</p>
-<p>将请求<a target="_blank" rel="noopener" href="http://www.javatrip.com:7001/dev%E8%BD%AC%E5%8F%91%E5%88%B0tomcat8080%EF%BC%8C%E5%B0%86%E8%AF%B7%E6%B1%82www.javatrip.com:7001/prod%E8%BD%AC%E5%8F%91%E5%88%B0tomcat8081%E3%80%82%E7%8E%B0%E5%9C%A8%E6%88%91%E4%BB%AC%E7%9A%84nginx%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%E5%8F%B7%E6%98%AF7001%E3%80%82%E6%89%93%E5%BC%80nginx%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%8C%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AAserver%E5%A6%82%E4%B8%8B%EF%BC%9A">www.javatrip.com:7001/dev转发到tomcat8080，将请求www.javatrip.com:7001/prod转发到tomcat8081。现在我们的nginx监听的端口号是7001。打开nginx的配置文件，新建一个server如下：</a></p>
-<p>server {<br>    listen       7001;<br>    server_name  47.104.xxx.xxx;</p>
-<pre><code>location ~ /dev/ &#123;
-    proxy_pass http://127.0.0.1:8080;
-&#125;
-
-location ~ /prod/ &#123;
-    proxy_pass http://127.0.0.1:8081;
-&#125;
-</code></pre>
-<p>}<br>然后试试效果，分别访问`<a target="_blank" rel="noopener" href="http://www.javatrip.com:7001/dev/a.html%E5%92%8Cwww.javatrip.com:7001/prod/a.html%EF%BC%8C%E6%95%88%E6%9E%9C%E5%A6%82%E4%B8%8B%EF%BC%9A">www.javatrip.com:7001/dev/a.html和www.javatrip.com:7001/prod/a.html，效果如下：</a></p>
-<p>其中，配置转发的时候用到了~，其含义内容如下：</p>
-<p>= 严格匹配。如果这个查询匹配，那么将停止搜索并立即处理此请求。<br>~ 为区分大小写匹配(可用正则表达式)<br>!<del>为区分大小写不匹配<br>~* 为不区分大小写匹配(可用正则表达式)<br>!</del>*为不区分大小写不匹配<br>^~ 如果把这个前缀用于一个常规字符串,那么告诉nginx如果路径匹配那么不测试正则表达式。</p>
-<h2 id="四-Nginx配置负载均衡"><a href="#四-Nginx配置负载均衡" class="headerlink" title="四 Nginx配置负载均衡"></a>四 Nginx配置负载均衡</h2><h3 id="4-1-什么是负载均衡"><a href="#4-1-什么是负载均衡" class="headerlink" title="4.1 什么是负载均衡"></a>4.1 什么是负载均衡</h3><p>负载均衡（Load Balance），意思是将负载（工作任务，访问请求）进行平衡、分摊到多个操作单元（服务器，组件）上进行执行。是解决高性能，单点故障（高可用），扩展性（水平伸缩）的终极解决方案。</p>
-<p>现在我们想实现的效果是通过访问<a target="_blank" rel="noopener" href="http://www.javatrip.com:7001/prod/a.html%EF%BC%8C%E5%B0%86%E8%AF%B7%E6%B1%82%E5%88%86%E5%88%AB%E5%88%86%E5%8F%91%E5%88%B0%E4%B8%A4%E4%B8%AAtomcat%E4%B8%8A%E9%9D%A2%E5%8E%BB%EF%BC%8C%E9%A6%96%E5%85%88%E6%88%91%E4%BB%AC%E5%9C%A8tomcat8080%E4%B8%8A%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AAprod%E7%9A%84%E6%96%87%E4%BB%B6%E5%A4%B9%EF%BC%8C%E9%87%8C%E9%9D%A2%E6%94%BE%E4%B8%80%E4%B8%AAa.html%E7%9A%84%E6%96%87%E4%BB%B6%E3%80%82%E8%BF%99%E6%A0%B7tomcat8081%E5%92%8Ctomcat8080%E4%B8%A4%E4%B8%AA%E4%B8%8A%E5%B0%B1%E9%83%BD%E6%9C%89%E4%BA%86%E4%B8%80%E4%B8%AAprod%E7%9A%84%E6%96%87%E4%BB%B6%E5%8A%A0%E4%B8%94%E9%87%8C%E9%9D%A2%E6%9C%89%E4%B8%80%E4%B8%AAa.html%E7%9A%84%E6%96%87%E4%BB%B6%E3%80%82">www.javatrip.com:7001/prod/a.html，将请求分别分发到两个tomcat上面去，首先我们在tomcat8080上新建一个prod的文件夹，里面放一个a.html的文件。这样tomcat8081和tomcat8080两个上就都有了一个prod的文件加且里面有一个a.html的文件。</a></p>
-<h3 id="4-2-配置nginx-conf"><a href="#4-2-配置nginx-conf" class="headerlink" title="4.2 配置nginx.conf"></a>4.2 配置nginx.conf</h3><p>首先，在http块中配置两个tomcat的服务列表</p>
-<p>upstream myserver{<br>    server 127.0.0.1:8080;<br>    server 127.0.0.1:8081;<br>}<br>其次，在server块中配置规则：</p>
-<p>server {<br>    listen       80;<br>    server_name  47.104.xxx.xxx;</p>
-<pre><code>location / &#123;
-    root   html;
-    proxy_pass http://myserver;
-    index  index.html index.htm;
-&#125;
-</code></pre>
-<p>}</p>
-<h3 id="4-3-测试效果"><a href="#4-3-测试效果" class="headerlink" title="4.3 测试效果"></a>4.3 测试效果</h3><p>访问地址：<a target="_blank" rel="noopener" href="http://www.javatrip.com:7001/prod/a.html%EF%BC%8C%E5%A4%9A%E5%88%B7%E6%96%B0%E5%87%A0%E6%AC%A1%E3%80%82%E5%8F%91%E7%8E%B0%E6%9C%89%E7%9A%84%E8%AF%B7%E6%B1%82%E5%88%B0tomcat8080%E4%B8%8A%EF%BC%8C%E6%9C%89%E7%9A%84%E8%AF%B7%E6%B1%82%E5%88%B0tomcat8081%E4%B8%8A%E3%80%82">www.javatrip.com:7001/prod/a.html，多刷新几次。发现有的请求到tomcat8080上，有的请求到tomcat8081上。</a></p>
-<h3 id="4-4-nginx支持的几种负载策略"><a href="#4-4-nginx支持的几种负载策略" class="headerlink" title="4.4 nginx支持的几种负载策略"></a>4.4 nginx支持的几种负载策略</h3><p>轮询（默认）：每个请求按时间顺序逐一分配到不同的服务器，如果服务器down了，会自动剔除。<br>upstream myserver{<br>    server 127.0.0.1:8080;<br>    server 127.0.0.1:8081;<br>}<br>weight（权重）：默认为1，权重越高，分配的请求越多。<br>upstream myserver{<br>    server 127.0.0.1:8080 weight=1;<br>    server 127.0.0.1:8081 weight=2;<br>}<br>ip hash：每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后台服务器，可以解决session的问题。<br>upstream myserver{<br>    ip_hash;<br>    server 127.0.0.1:8080;<br>    server 127.0.0.1:8081;<br>}<br>fair（第三方）：按后端响应时间进行分配，响应时间越短分配的请求越多。<br>upstream myserver{<br>    server 127.0.0.1:8080;<br>    server 127.0.0.1:8081;<br>    fair;<br>}<br>由于动静分离在实际开发中也不常用，就不再写了。本篇文章做为一个nginx入门，到这里就基本完结了。</p>
+        <h2 id="为什么需要监控？？"><a href="#为什么需要监控？？" class="headerlink" title="为什么需要监控？？"></a>为什么需要监控？？</h2><p>对于一个物理机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令docker stats。<br>[root@docker ~]# docker stats<br>CONTAINER      CPU %    MEM USAGE / LIMIT    MEM %      NET I/O         BLOCK I/O    PIDS<br>bd96d72ed9c7   0.04%  14.97 MiB / 7.64 GiB  0.19%    8.22 MB / 805 MB   0 B / 0 B      9<br>665563143eb7   0.01%  18.12 MiB / 7.64 GiB   0.23%  19.7 MB / 18.5 MB   0 B / 39.4 MB  8<br>f2304dad5855  0.18%  98.45 MiB / 7.64 GiB   1.26%   1.07 GB / 9.97 MB   0 B / 2.13 GB  9<br>今天要介绍的是一款开源方案cAdvisor+InfluxDB+Grafana。<br>组件简介</p>
+<h2 id="cAdvisor：用于数据采集"><a href="#cAdvisor：用于数据采集" class="headerlink" title="cAdvisor：用于数据采集"></a>cAdvisor：用于数据采集</h2><p>cadvisor谷歌公司自己用来监控他们基础设施的一款工具，这个工具厉害之处不仅能监控docker容器的实时信息，而且还能将你的cadvisor这容器所在的主机的系统的实时信息，但是由于cadvisor只是能监控到实时的信息而不能保存。</p>
+<h2 id="InfluxDB：用于数据存储"><a href="#InfluxDB：用于数据存储" class="headerlink" title="InfluxDB：用于数据存储"></a>InfluxDB：用于数据存储</h2><p>图片</p>
+<p>InfluxDB 是用Go语言编写的一个开源分布式时序、事件和指标数据库，无需外部依赖。所以我们要使用influxdb将这些实时监控到的信息存放起来。</p>
+<p>InfluxDB主要特色功能<br>基于时间序列，支持与时间有关的相关函数（如最大，最小，求和等）；</p>
+<p>可度量性：你可以实时对大量数据进行计算；</p>
+<p>基于事件：它支持任意的事件数据；</p>
+<p>InfluxDB主要特点<br>无结构（无模式）</p>
+<p>可以是任意数量的列</p>
+<p>可拓展的；</p>
+<p>支持min, max, sum, count, mean, median 等一系列函数，方便统计</p>
+<p>原生的HTTP支持，内置HTTP API</p>
+<p>强大的类SQL语法</p>
+<p>自带管理界面，方便使用</p>
+<h2 id="Grafana：-用于数据展示"><a href="#Grafana：-用于数据展示" class="headerlink" title="Grafana： 用于数据展示"></a>Grafana： 用于数据展示</h2><p>Grafana是一个可视化面板（Dashboard），有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器，支持Graphite、zabbix、InfluxDB、Prometheus和OpenTSDB作为数据源。</p>
+<p>Grafana主要特性：<br>灵活丰富的图形化选项</p>
+<p>可以混合多种风格</p>
+<p>支持白天和夜间模式</p>
+<p>多个数据源。</p>
+<p>安装布署过程<br>首先得有docker环境，这个就不用介绍了吧，请参考前面的文章</p>
+<p>Docker容器技术入门（一）</p>
+<p>1、部署influxDB服务<br>[root@master ~]# docker run -d –name influxdb -p 8086:8086 tutum/influxdb<br>Unable to find image ‘tutum/influxdb:latest’ locally<br>Trying to pull repository docker.io/tutum/influxdb …<br>latest: Pulling from docker.io/tutum/influxdb<br>a3ed95caeb02: Pull complete<br>23efb549476f: Pull complete<br>aa2f8df21433: Pull complete<br>ef072d3c9b41: Pull complete<br>c9f371853f28: Pull complete<br>a248b0871c3c: Pull complete<br>749db6d368d0: Pull complete<br>db2492acfcc3: Pull complete<br>b7e7d2e12d53: Pull complete<br>4272a53eef10: Pull complete<br>9b2fefdb5321: Pull complete<br>Digest: sha256:5b7c5e318303ad059f3d1a73d084c12cb39ae4f35f7391b79b0ff2c0ba45304b<br>Status: Downloaded newer image for docker.io/tutum/influxdb:latest<br>f384db08ffc78e01fc27bf4c35dc6503b0fd2473cd8d5114b4d8a5475f928b53<br>说明：<br>-d ：后台运行此容器</p>
+<p>–name ：启运容器分配名字influxdb</p>
+<p>-p ：映射端口，8083端口为infuxdb管理端口，8086端口是infuxdb的数据端口</p>
+<p>tutum/influxdb：通过这个容器来运行的，默认会在docker官方仓库pull下来</p>
+<p>查看容器<br>[root@master ~]# docker ps<br>CONTAINER ID      IMAGE          COMMAND      CREATED           STATUS                   PORTS                      NAMES<br>f2304dad5855   tutum/influxdb   “/run.sh”   4 seconds ago   Up 4 seconds  0.0.0.0:8083-&gt;8083/tcp, 0.0.0.0:8086-&gt;8086/tcp   influxdb<br>现在可以通过浏览器去访问influxdb的管理端了<br><img src="images/1.png"><br>接下来创建cadvisor的数据库与用户，这个用于后期配置granfa</p>
+<p>图片</p>
+<p>回车直接创建完成如下图</p>
+<p>图片</p>
+<p>创建管理用户</p>
+<p>图片</p>
+<p>创建完成如下图</p>
+<p>图片</p>
+<p>同时也是可以使用CLI命令行界面来创建的，命令一样</p>
+<p>图片</p>
+<p>2、布署cadvisor服务<br>[root@master ~]# docker run -d <br>–name=cadvisor <br>-p 8082:8080 <br>-v /:/rootfs,ro <br>-v /var/run:/var/run <br>-v /sys:/sys,ro <br>-v /var/lib/docker/:/var/lib/docker,ro <br>google/cadvisor <br>-storage_driver=influxdb <br>-storage_driver_db=cadvisor <br>-storage_driver_host=influxdb:8086<br>Unable to find image ‘google/cadvisor:latest’ locally<br>Trying to pull repository docker.io/google/cadvisor …<br>latest: Pulling from docker.io/google/cadvisor<br>ab7e51e37a18: Pull complete<br>a2dc2f1bce51: Pull complete<br>3b017de60d4f: Pull complete<br>Digest: sha256:9e347affc725efd3bfe95aa69362cf833aa810f84e6cb9eed1cb65c35216632a<br>Status: Downloaded newer image for docker.io/google/cadvisor:latest<br>a212dc33c9424b6e36485334511e6317bdebc06977b9af374b81b0cab113e724<br>说明：<br>-d ：后台运行此容器</p>
+<p>–name ：启运容器分配名字cadvisor</p>
+<p>-p ：映射端口8082:8080（由于环境8080端口被占用，cadvisor默认端口是8080不建议修改）</p>
+<p>-v：把宿主机的目录映射到容器中，这些目录都是cadviso需要采集的目录文件和监控内容</p>
+<p>-storage_driver：需要指定cadvisor的存储驱动、数据库主机、数据库名</p>
+<p>google/cadvisor：通过cadvisor这个镜像来运行容器，默认会在docker官方仓库把镜像pull下来；</p>
+<p>查看cadvisor容器：<br>[root@master ~]# docker ps<br>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                   NAMES<br>a212dc33c942        google/cadvisor     “/usr/bin/cadvisor…”   2 minutes ago       Up 2 minutes        0.0.0.0:8082-&gt;8080/tcp                 cadvisor<br>现在可以通过浏览访问cadisor的管理页面</p>
+<p>图片</p>
+<p>cadvisor的基础图形功能也酷炫的</p>
+<p>图片</p>
+<p>测试是否写入influxdb数据库</p>
+<p>图片</p>
+<p>3、布署granafa<br>[root@master ~]# docker run -d –name grafana -p 3000:3000 grafana/grafana<br>Unable to find image ‘grafana/grafana:latest’ locally<br>Trying to pull repository docker.io/grafana/grafana …<br>latest: Pulling from docker.io/grafana/grafana<br>f2aa67a397c4: Pull complete<br>89573effc7c8: Pull complete<br>b55c103da375: Pull complete<br>Digest: sha256:364bec4a39ecbec744ea4270aae35f6554eb6f2047b3ee08f7b5f1134857c32c<br>Status: Downloaded newer image for docker.io/grafana/grafana:latest<br>665563143eb74e5e2e76b7a1533cbf67a68590d355b0b22d453eac07e0e0b616<br>[root@master ~]# docker ps<br>CONTAINER ID      IMAGE             COMMAND        CREATED          STATUS              PORTS                  NAMES<br>665563143eb7  grafana/grafana       “/run.sh”   48 seconds ago    Up 47 seconds    0.0.0.0:3000-&gt;3000/tcp     grafana<br>访问WEB管理端</p>
+<p>图片</p>
+<p>用户名：密码 admin:admin</p>
+<p>添加数据源</p>
+<p>图片</p>
+<p>图片</p>
+<p>之后保存并测试连接</p>
+<p>新建New dashboard</p>
+<p>图片</p>
+<p>图片</p>
+<p>这里随便选择一个容器做为测试使用，实际环境可根据实际环境填写</p>
+<p>图片</p>
+<p>图片</p>
+<p>保存返回到HOME界面后，如下图</p>
+<p>图片</p>
+<p>最终的效果图如下</p>
+<p>图片</p>
 
         <p class="suffix-end">__END__</p>
         <div class="suffix-box">
@@ -155,7 +130,7 @@ location ~ /prod/ &#123;
             <div class="suffix-box-right">
                 <span class="suffix-box-title">文章作者</span>：Wayne Blog
                 <br>
-                <span class="suffix-box-title">文章出处</span>：<a href="/2020/08/01/%E4%BD%A0%E4%BB%AC%E8%A6%81%E7%9A%84nginx%E6%95%99%E7%A8%8B/" target="_blank">nginx教程</a>
+                <span class="suffix-box-title">文章出处</span>：<a href="/2021/10/13/%E4%BD%A0%E4%BB%AC%E8%A6%81%E7%9A%84nginx%E6%95%99%E7%A8%8B/" target="_blank">打造高逼格/可视化的Docker容器监控系统平台教程</a>
                 <br>
                 <span class="suffix-box-title">作者签名</span>：简单地活着, 肆意又精彩.
                 <br>
@@ -172,7 +147,7 @@ location ~ /prod/ &#123;
             <div class="category">
                 分类：
                 
-                    <a href="/categories/Web/">Web</a>
+                    <a href="/categories/linux/">linux</a>
                 
             </div>
         
@@ -180,17 +155,14 @@ location ~ /prod/ &#123;
             <div class="tag">
                 标签：
                 
-                    <a href="/tags/nginx/">nginx</a>
+                    <a href="/tags/Docker/">Docker</a>
                 
             </div>
         
         <div class="article-prev-next">
             
-                <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" class="prev-prefix">« </a> 上一篇：    <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" title="发布于 2020-08-01 12:00">zabbix教程</a>
-                <br>
             
-            
-                <a href="/2020/01/01/software-download/" class="next-prefix">» </a> 下一篇：    <a href="/2020/01/01/software-download/" title="发布于 2020-01-01 12:00">software download</a>
+                <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" class="next-prefix">» </a> 下一篇：    <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" title="发布于 2021-06-29 04:09">linux rsync同步命令</a>
             
         </div>
     </div>
