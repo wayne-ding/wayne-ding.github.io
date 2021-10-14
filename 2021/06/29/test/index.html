@@ -58,10 +58,11 @@
     <div class="toc"></div>
     <div class="article-body">
         <h2 id="linux-rsync同步命令-值得收藏"><a href="#linux-rsync同步命令-值得收藏" class="headerlink" title="linux rsync同步命令(值得收藏)"></a>linux rsync同步命令(值得收藏)</h2><p>GoRustNeverStop 2017-08-09 15:09:38  785  收藏<br>分类专栏： rsync<br>如果你是一位运维工程师，你很可能会面对几十台、几百台甚至上千台服务器，除了批量操作外，环境同步、数据同步也是必不可少的技能。</p>
-<p>说到“同步”，不得不提的利器就是rsync，今天就来说说我从这个工具中看到的同步的艺术。</p>
-<p>[不带任何选项]</p>
+<p>说到“同步”，不得不提的利器就是rsync，今天就来说说我从这个工具中看到的同步的艺术。<br><img src="test/2.png"><br>[不带任何选项]</p>
 <p>我们经常这样使用rsync：</p>
 <p>复制代码代码如下:</p>
+<p><a target="_blank" rel="noopener" href="https://mmbiz.qpic.cn/mmbiz_png/tuSaKc6SfPp9J7uNTht0Wj4XBHDPnjRgCEffBG4uJVkIuXBakAGX3ichn8f6n1gUNA5gSKscC2P6b2zJpsMInEg/640?tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">https://mmbiz.qpic.cn/mmbiz_png/tuSaKc6SfPp9J7uNTht0Wj4XBHDPnjRgCEffBG4uJVkIuXBakAGX3ichn8f6n1gUNA5gSKscC2P6b2zJpsMInEg/640?tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1</a></p>
+<p><a target="_blank" rel="noopener" href="https://mmbiz.qpic.cn/mmbiz_png/tuSaKc6SfPp9J7uNTht0Wj4XBHDPnjRgCEffBG4uJVkIuXBakAGX3ichn8f6n1gUNA5gSKscC2P6b2zJpsMInEg/640?tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">https://mmbiz.qpic.cn/mmbiz_png/tuSaKc6SfPp9J7uNTht0Wj4XBHDPnjRgCEffBG4uJVkIuXBakAGX3ichn8f6n1gUNA5gSKscC2P6b2zJpsMInEg/640?tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1</a></p>
 <p>$ rsync main.c machineB:/home/userB<br>1 只要目的端的文件内容和源端不一样，就会触发数据同步，rsync会确保两边的文件内容一样。<br>2 但rsync不会同步文件的“modify time”，凡是有数据同步的文件，目的端的文件的“modify time”总是会被修改为最新时刻的时间。<br>3 rsync不会太关注目的端文件的rwx权限，如果目的端没有此文件，那么权限会保持与源端一致；如果目的端有此文件，则权限不会随着源端变更。<br>4 只要rsync有对源文件的读权限，且对目标路径有写权限，rsync就能确保目的端文件同步到和源端一致。<br>5 rsync只能以登陆目的端的账号来创建文件，它没有能力保持目的端文件的输主和属组和源端一致。（除非你使用root权限，才有资格要求属主一致、属组一致）</p>
 <p>[-t选项]</p>
 <p>我们经常这样使用-t选项：</p>
@@ -76,155 +77,161 @@
 <p>这个选项，简单易懂，就是让rsync输出更多的信息，我们可以举一个例子：</p>
 <p>?</p>
 <pre><code>     1
-   
+
 
      2
-   
+
 
      3
-   
+
 
      4
-   
+
+
 
      $ 
      rsync 
       -vI main.c machineB:
      /home/userB                         
-    
+
+
 
      main.c
-    
+
+
 
      sent 81 bytes received 42 bytes 246.00 bytes
      /sec
-    
+
+
 
      total size is 11 speedup is 0.09
-    
 </code></pre>
 <p>你增加越多的v，就可以获得越多的日志信息。</p>
 <p>?</p>
 <pre><code>     1
-   
+
 
      2
-   
+
 
      3
-   
+
 
      4
-   
+
 
      5
-   
+
 
      6
-   
+
 
      7
-   
+
 
      8
-   
+
 
      9
-   
+
 
      10
-   
+
 
      11
-   
+
 
      12
-   
+
 
      13
-   
+
 
      14
-   
+
 
      15
-   
+
 
      16
-   
+
 
      17
-   
+
 
      18
-   
+
 
      19
-   
+
 
      20
-   
+
 
      21
-   
+
 
      22
-   
+
 
      23
-   
+
 
      24
-   
+
 
      25
-   
+
 
      26
-   
+
 
      27
-   
+
 
      28
-   
+
 
      29
-   
+
 
      30
-   
+
 
      31
-   
+
 
      32
-   
+
 
      33
-   
+
 
      34
-   
+
 
      35
-   
+
 
      36
-   
+
 
      37
-   
+
+
 
      $ 
      rsync 
       -vvvvt abc.c machineB:
      /home/userB
-    
+
+
 
      cmd= machine=machineB user= path=
      /home/userB
-    
+
+
 
      cmd[0]=
      ssh 
@@ -232,7 +239,8 @@
      rsync 
       cmd[3]=--server cmd[4]=-vvvvte. cmd[5]=. cmd[6]=
      /home/userB
-    
+
+
 
      opening connection using: 
      ssh 
@@ -240,121 +248,153 @@
      rsync 
       --server -vvvvte. . 
      /home/userB
-    
+
+
 
      note: iconv_open(
      &quot;ANSI_X3.4-1968&quot;
      , 
      &quot;ANSI_X3.4-1968&quot;
      ) succeeded.
-    
+
+
 
      (Client) Protocol versions: remote=28, negotiated=28
-    
+
+
 
      (Server) Protocol versions: remote=30, negotiated=28
-    
+
+
 
      [sender] make_file(abc.c,*,2)
-    
+
+
 
      [sender] flist start=0, used=1, low=0, high=0
-    
+
+
 
      [sender] i=0 abc.c mode=0100664 len=11 flags=0
-    
+
+
 
      send_file_list 
      done
-    
+
+
 
      file 
       list sent
-    
+
+
 
      send_files starting
-    
+
+
 
      server_recv(2) starting pid=31885
-    
+
+
 
      recv_file_name(abc.c)
-    
+
+
 
      received 1 names
-    
+
+
 
      [receiver] i=0  abc.c mode=0100664 len=11
-    
+
+
 
      recv_file_list 
      done
-    
+
+
 
      get_local_name count=1 
      /home/userB
-    
+
+
 
      recv_files(1) starting
-    
+
+
 
      generator starting pid=31885 count=1
-    
+
+
 
      delta transmission enabled
-    
+
+
 
      recv_generator(abc.c,0)
-    
+
+
 
      abc.c is uptodate
-    
+
+
 
      generate_files phase=1
-    
+
+
 
      send_files phase=1
-    
+
+
 
      recv_files phase=1
-    
+
+
 
      generate_files phase=2
-    
+
+
 
      send files finished
-    
+
+
 
      total: matches=0 hash_hits=0 false_alarms=0 data=0
-    
+
+
 
      generate_files finished
-    
+
+
 
      recv_files finished
-    
+
+
 
      client_run waiting on 14318
-    
+
+
 
      sent 36 bytes received 16 bytes 104.00 bytes
      /sec
-    
+
+
 
      total size is 11 speedup is 0.21
-    
+
+
 
      _exit_cleanup(code=0, 
      file
      =main.c, line=1031): entered
-    
+
+
 
      _exit_cleanup(code=0, 
      file
      =main.c, line=1031): about to call 
      exit
      (0)
-    
 </code></pre>
 <p>[-z选项]</p>
 <p>这是个压缩选项，只要使用了这个选项，rsync就会把发向对端的数据先进行压缩再传输。对于网络环境较差的情况下建议使用。</p>
@@ -363,31 +403,32 @@
 <p>我们在第一次使用rsync时，往往会遇到这样的囧境：</p>
 <p>?</p>
 <pre><code>     1
-   
+
 
      2
-   
+
+
 
      $ 
      rsync 
       superman machineB:
      /home/userB
-    
+
+
 
      skipping directory superman
-    
 </code></pre>
 <p>如果你不额外告诉rsync你需要它帮你同步文件夹的话，它是不会主动承担的，这也正是rsync的懒惰之处。</p>
 <p>所以，如果你真的想同步文件夹，那就要加上-r选项，即recursive（递归的、循环的），像这样：</p>
 <p>?</p>
 <pre><code>     1
-   
+
+
 
      $ 
      rsync 
       -r superman machineB:
      /home/userB
-    
 </code></pre>
 <p>我们在上面的讲解中说过，如果时间戳和文件大小完全一致，只有文件内容不同，且你没有使用-I选项的话，那么，rsync是不会进行数据同步的。</p>
 <p>那么，提个问题：“因为在Linux的世界里，文件夹也是文件，如果这类文件（文件夹）也只有内容不同，而时间戳和文件大小都相同，rsync会发现么？”</p>
@@ -397,45 +438,50 @@
 <p>如果我们要同步一个软链接文件，你猜rsync会提示什么？</p>
 <p>?</p>
 <pre><code>     1
-   
+
 
      2
-   
+
 
      3
-   
+
 
      4
-   
+
 
      5
-   
+
 
      6
-   
+
+
 
      $ ll
-    
+
+
 
      total 128
-    
+
+
 
      -rw-rw-r-- 1 userA userA 11 Dec 26 07:00 abc.c
-    
+
+
 
      lrwxrwxrwx 1 userA userA 5 Dec 26 11:35 softlink -&gt; abc.c
-    
+
+
 
      $ 
      rsync 
       softlink machineB:
      /home/userB
-    
+
+
 
      skipping non-regular 
      file 
       &quot;softlink&quot;
-    
 </code></pre>
 <p>嗯，你猜对了，rsync又无情地拒绝了我们。它一旦发现某个文件是软链接，就会无视它，除非我们增加-l选项。</p>
 <p>复制代码代码如下:</p>
@@ -460,32 +506,35 @@
 <p>从这句话里，我们学到了一个小技巧，那就是-n选项，它是一个吓唬人的选项，它会用受影响的文件列表来警告你，但不会真的去删除，这就让我们有了确认的机会和回旋的余地。我们看看实际用法吧：</p>
 <p>?</p>
 <pre><code>     1
-   
+
 
      2
-   
+
 
      3
-   
+
 
      4
-   
+
+
 
      $ 
      rsync 
       -n --delete -r . machineB:
      /home/userB/
-    
+
+
 
      deleting superman
      /xxx
-    
+
+
 
      deleting main.c
-    
+
+
 
      deleting acclink
-    
 </code></pre>
 <p>[–exclude选项和–exclude-from选项]</p>
 <p>如果你不希望同步一些东西到目的端的话，可以使用–exclude选项来隐藏，rsync还是很重视大家隐私的，你可以多次使用–exclude选项来设置很多的“隐私”。</p>
