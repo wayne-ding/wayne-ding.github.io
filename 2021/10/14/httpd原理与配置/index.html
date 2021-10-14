@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>apache-httpd原理与配置</title>
+
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSansSC.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Playball.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/PTMono.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/RobotoSlab.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.css">
+
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.css">
+    
+        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/normal.css">
+    
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <a id="cover"></a>
+    <div id="header">
+    <div class="header">
+        <div class="vertical">
+            <div class="inner">
+                <h1 class="header-subtitle">apache-httpd原理与配置</h1>
+                <div class="header-subinfo">
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2021-10-14
+                        </span>
+                        
+                            <span id="/2021/10/14/httpd原理与配置/" class="leancloud_visitors" data-flag-title="apache-httpd原理与配置">
+                                <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
+                            </span>
+                        
+                        <span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/10/14/httpd原理与配置/"></span>
+                        </span>  
+                    </p>                 
+                </div>
+            </div>
+        </div>
+        <canvas id="articleHeaderCanvas"></canvas>
+    </div>
+</div>
+    <div id="container">
+    <div id="content">
+        <div id="article">
+    <div class="toc"></div>
+    <div class="article-body">
+        <h2 id="一、apache简介："><a href="#一、apache简介：" class="headerlink" title="一、apache简介："></a>一、apache简介：</h2><pre><code>Apache HTTPD又可以简称为httpd或者Apache，它是Internet使用最广泛的web服务器之一，使用Apache提供的web服务器是由守护进程httpd，通过http协议进行文本传输，默认使用80端口的明文传输方式，当然，后来，为了保证数据的安全和可靠性，又添加了443的加密传输的方式，Apache提供的服务器又被称为：补丁服务器，原因很简单，它是一款高度模块化的软件，想要给它添加相应的功能只需添加相应的模块，让其Apache主程序加载相应的模块，不需要的模块也可以不用加载，保证了Apache的简洁，轻便，高效性，当出现大量访问一个服务器是可以使用多种复用模式，保证了服务器能快速回应客户端的请求，如MPM，端口复用技术。
+</code></pre>
+<h2 id="二、一次完整的http请求"><a href="#二、一次完整的http请求" class="headerlink" title="二、一次完整的http请求"></a>二、一次完整的http请求</h2><ol>
+<li>http请求和响应过程：</li>
+</ol>
+<p>（1）建立连接：客户端向服务器建立连接，发送报文，包含相应的请求资源的方法和客户端能支持的协议，编码等数据。</p>
+<p>（2）服务器决定是否接受请求。</p>
+<p>（3）如果服务器同意建立连接时便要处理请求，其中包括访问资源，访问资源时需要相应的映射机制，把客户端的URL转化为本地目录下相应的文件</p>
+<p>（4）服务器访问到相应的资源后构建响应报文</p>
+<p>（5）发送响应报文，报文中包含相应的状态码，和数据报文</p>
+<p>（6）服务器记录日志</p>
+<p>（7）客户端接收数据</p>
+<p>附示例：</p>
+<ol>
+<li><p>[root@177cnode1 ~]# telnet vhost2.jack.com 80</p>
+</li>
+<li><p>Trying 192.168.20.128…</p>
+</li>
+<li><p>Connected to vhost2.jack.com.</p>
+</li>
+<li><p>Escape character is ‘^]’.</p>
+</li>
+<li><p>GET /index.html http/1.1  ====&gt;使用GET方法请求服务器端的主页</p>
+</li>
+<li><p>host:192.168.20.128 ===&gt;host字段不能缺少，但可以是空值，指定服务器的ip地址或域名也可以指定</p>
+</li>
+<li><p>端口号，请求报文以一个空行结尾，最后键入回车（两次回车）一般浏览器发送请求时会包括能接受的</p>
+</li>
+<li><p>编码方式，报文长度等</p>
+</li>
+<li><p>HTTP/1.1 200 OK   ===&gt;回应报文的状态码</p>
+</li>
+<li><p>Date: Tue, 04 Oct 2016 03:48:47 GMT   ===&gt;回应报文的其它字段</p>
+</li>
+<li><p>Server: Apache/2.4.6 (CentOS)</p>
+</li>
+<li><p>Last-Modified: Sun, 02 Oct 2016 08:41:47 GMT</p>
+</li>
+<li><p>ETag: “16-53dddcc3d4d35”</p>
+</li>
+<li><p>Accept-Ranges: bytes</p>
+</li>
+<li><p>Content-Length: 22</p>
+</li>
+<li><p>Content-Type: text/html; charset=UTF-8</p>
+</li>
+<li><p>this is vhost2’s page    ===&gt;网页内容</p>
+</li>
+<li><p>[root@177cnode1 ~]#</p>
+</li>
+<li><p>http两种连接方式：</p>
+</li>
+</ol>
+<p>（1）短连接：非保持连接</p>
+<p>（2）长连接：保持连接。</p>
+<p>数量限制：多少个资源</p>
+<p>时间限制：最长可以保持长连接多长时间</p>
+<p>附示例：</p>
+<p>  在相应的目录下面建立以.conf结尾的文件内容如下keepalive.conf文件</p>
+<ol>
+<li><p>[root@177cnode1 conf.d]# pwd</p>
+</li>
+<li><p>/etc/httpd/conf.d</p>
+</li>
+<li><p>[root@177cnode1 conf.d]# cat keepalive.conf </p>
+</li>
+<li><p>keepalive on</p>
+</li>
+<li><p>keepalivetimeout 180</p>
+</li>
+<li><p>MaxKeepAliveRequests 1000</p>
+<p>上面配置中第一行启用了keepalive 功能，第二行设置建立连接后多少秒后断开连接，第三项设置了最大保持alive状态的请求数量为1000个</p>
+</li>
+<li><p> 多种服务器状态码：</p>
+</li>
+</ol>
+<p>  在服务器回应客户端时会回应相应的状态码，不同的状态码具有不同的含义</p>
+<p>1xx：信息类</p>
+<p>2xx：成功类</p>
+<p>3xx：重定向类</p>
+<p>4xx：客户端错误类</p>
+<p>5xx：服务端错误类</p>
+<ol start="4">
+<li>多种客户端请求方法：</li>
+</ol>
+<p>GET、HEAD、POST、PUT、DELETE、OPTION、TRACE …</p>
+<p>附：IANA机构对socket端口分配：</p>
+<p>1-1024：众所周知端口，永久分配给固定的应用程序使用，属于特权端口，只有root有权使用</p>
+<p>1024-4195：注册端口，要求略宽松，分配给某程序注册使用</p>
+<p>41952-65535：客户端程序使用的随机端口，动态端口，又叫私有端口或随机端口</p>
+<p>三、http的特性：</p>
+<p>高度模块化：core module +modules</p>
+<ol>
+<li>多路处理模块MPM：multipath processing modules</li>
+</ol>
+<p>MPM模块在httpd-2.4中是动态共享模块的，没有编译如主程序当中，httpd-2. 2中是静态编译入主程序当中的。在这些模型中，默认使用第一个prefork模型，第二个模型因为出错不以排查，因此使用较少，在第三个模型当中因为是比较新的功能，只有在httpd-2.4之后的版本才有的功能，所以使用较少，因为在企业使用时稳定才是王道，绝非功能越新越好</p>
+<p>prefork：多进程模型，也是默认类型，采用预派生子进程方式，用单独的子进程来处理不同的请求，进程之间彼此独立。两级架构，主进程一个子进程若干个。</p>
+<p>几个常用选项（指令后面的#代表相应数量的数字）：</p>
+<p>这些选项直接在主配置文件中修改（httpd-2.2，包含2.2之前），在httpd-2.4之后的版本中mpm的配置文件（/etc/httpd/conf.modules/00-mpm.conf）中编写即可</p>
+<p>ServerLimit # 服务器允许配置的进程数上限，在其它两种模型中因为是多级架构，所以和线程子进程的乘积等有关系</p>
+<p>StartServers #  httpd服务在启动时要启动的子进程数量</p>
+<p>MinspareServers # 在服务器启动StartsServer指定的子进程书量后每隔一秒创建一定数量的进程（是指数型的增加，第一次1个，第二次两个，第三次4个，一直增加到32个每秒后稳定增加），直到增加到MinSpareServer指定的数量</p>
+<p>MaxSpareServers # 这个值是设置系统最大空闲进程数量，每当大于这个数量的值时，系统会kill掉一部分子进程，但是当这个值设置的小于MinSpareServer的值时，系统会自动将该值设置为最小空闲进程数量加一</p>
+<p>MaxConnectionsPerchild # 这个值代表每个子进程最大能处理多少个连接之后将被系统kill掉（因为进程在使用过程当中可能有数据错误或无法以外的内存泄露等）如果设置为0则代表永不kill，这个值从httpd-2.4之后才开始叫这个名字</p>
+<p>MaxRequestWorkers #最大处理并发请求数量的限制2.4之后的版本才有的指令，意义等同于MaxClient</p>
+<p>MaxClient # MaxClients设定的是 Apache可以并发处理的请求，是对Apache性能影响最大的参数。其缺省值150是远远不够的，如果请求总数已达到这个值（可通过ps -ef|grep http|wc -l来确认），那么后面的请求就要排队，直到某个已处理请求完毕。这就是系统资源还剩下很多而HTTP访问却很慢的主要原因。虽然理论上这个值越大，可以处理的请求就越多，但Apache默认的限制不能大于256。ServerLimit指令无须重编译Apache就可以加大MaxClients。这个指令是httpd-2.2的</p>
+<p>worker：多线程模型，为每个请求分配一个线程，三级架构，一个主进程，若干子进程，每个子进程管理若干个线程</p>
+<p>ServerLimit</p>
+<p>StartServers</p>
+<p>MinSpareThreads</p>
+<p>MaxSpareThreads</p>
+<p>MaxRequestWorkers 应该设置为0，因为此时它已经不在相应用户请求，0表示不加限制，不kill</p>
+<pre><code>    ThreadsPerChild
+</code></pre>
+<p>event：事件驱动模型，每个进程处理多个请求有多个进程</p>
+<p>ThreadsPerChild</p>
+<p>MaxRequestWorkers</p>
+<pre><code>    AsyncRequestWorkerFactor
+</code></pre>
+<ol start="3">
+<li>httpd的功能特性：</li>
+</ol>
+<p>虚拟主机</p>
+<p>反向代理</p>
+<p>负载均衡</p>
+<p>CGI：common Gateway Interface</p>
+<p>…</p>
+<ol start="4">
+<li>httpd的版本：</li>
+</ol>
+<p>httpd-1.3</p>
+<p>httpd-2.0</p>
+<p>httpd-2.2</p>
+<p>httpd-2.4</p>
+<p>在centos6.8中系统版本为httpd-2.2，centos7.0之后的版本自带的httpd版本为httpd-2.4</p>
+<p>四、程序环境：</p>
+<ol>
+<li><p>主程序：/usr/sbin/httpd</p>
+</li>
+<li><p>通过正则表达式将注释行和空行去掉，下面是httpd-2.4版本配置文件示例：</p>
+</li>
+</ol>
+<p>[root@7cnode2 ~]# grep -v -E -e”^[[:space:]]<em>#” -e “^[[:space:]]</em>$” httpd.conf</p>
+<p>在此需要注意的是该配置文件中每一配置分为两部分，配置指令和值两部分，配置指令不分区大小写，值部分除了路径名是要区分大小写，其它部分也是不区分大小写的！</p>
+<p>ServerRoot “/etc/httpd”  配置httpd使用哪个位置中使用相对路径查找配置文件，如指定错误日志时写到的就是一个相对路径，相对与此处的目录查找错误日志文件存放目录</p>
+<p>Listen 80  监听端口，可以同时监听多个端口不过要注意设置selinux和防火墙，可以重复定义多次，监听多个端口</p>
+<p>Include conf.modules.d/*.conf 加载其它配置文件，类似于C语言的头文件的加载，此处可以使用相对路径也可以使用绝对路径，相对路径是相对于ServerRoot的路径，可以使用glob通配符，此处的配置文件是用来加载DSO（dynamic shared object）模块</p>
+<p>User apache</p>
+<p>Group apache 程序运行时的用户名和组名，在安装Apache时已经创建了系统账号和组账号，程序启动时是以root身份启动，执行完root特权的所有操作后（例如启动监听80端口，低于1024的端口的监听需要root才有权力执行）会以非特权用户执行程序</p>
+<p>ServerAdmin root@localhost 管理员的邮箱地址，当httpd出问题时，联系该邮箱地址可以联系到管理员</p>
+<p>ServerName <a target="_blank" rel="noopener" href="http://www.jackcui.node2.com/">www.jackcui.node2.com:80</a>   ServerName给定了主机名和端口号，主要用于服务器辨识自己是什么名字，如果此处没有配置的话服务器会进行查询/etc/hosts文件，最后查询自己的DNS服务器直到将IP地址反解至主机名如果没有DNS服务器，此处也可以直接写自己的ip地址和端口号，强烈建议此处的配置不要省略，否者重启httpd服务时会很慢，因为会进行DNS反解析，这一个配置的作用主要是用来定义重定向时，服务器区分访问的域名是自己还是别的主机</p>
+<p><Directory>  关于目录的一些配置，有关目录的访问权限等都是在这里定义，可以使用基于URL定义访问权限，但要使用</Directory></p>
+<p>&lt;Location “”&gt; …<Location>来定义</Location></p>
+<pre><code>AllowOverride none   AllowOverride参数就是指明Apache服务器是否去找.htacess文件作为配置文件，如果设置为none,那么服务器将忽略.htacess文件，如果设置为All,那么所有在.htaccess文件里有的指令都将被重写。对于AllowOverride，还可以对它指定如下一些能被重写的指令类型.
+
+Require all denied 对目录的授权此处为拒绝所有访问
+</code></pre>
+
+
+<p>DocumentRoot”/var/www/html”  定义目录的根位置类似于配置文件的根，不过此处是网页存放的根，在定义Directory目录时，那里的目录同样可以是绝对路径，也可以是相对于此处的路径</p>
+<p>&lt;Directory”/var/www”&gt;</p>
+<pre><code>AllowOverride None
+
+Require all granted
+</code></pre>
+
+
+<p>&lt;Directory”/var/www/html”&gt;</p>
+<pre><code>Options Indexes FollowSymLinks
+
+AllowOverride None
+
+Require all granted
+</code></pre>
+
+
+<p><IfModule dir_module>  此处为仅在加载了模块dir_module 后才执行，DirectoryIndex配置指令后面的值可以跟多个，先后顺序很关键，值的含义为URL访问时进入目录是应该寻找哪一个文件，多个时按顺序寻找，找不到第一个然后寻找第二个值</IfModule></p>
+<pre><code>DirectoryIndex index.html
+</code></pre>
+
+
+<p>&lt;Files “.ht*”&gt;  对所有安全相关的敏感文件设置为禁止，如目录下的.htaccess，.htpasswd</p>
+<pre><code>Require all denied
+</code></pre>
+
+
+<p>ErrorLog”logs/error_log”  设置错误日志的存放路径，这里是一个软链接，指向/var/log/httpd/的符号链接</p>
+<p>LogLevel warn  设置日志级别，仅达到该级别才记录日志</p>
+<IfModulelog_config_module> 
+
+<p>下面定义了多种日志的记录格式，可以人为的修改自己想要定义的格式，LogFormat后面的双引号具体定义了日志的格式，后面有一个名字，在使用该定义好的格式可以使用后面的别名代替，当然也可以在使用时直接用双引号加相应的格式，访问日志也可以在虚拟主机中单独定义</p>
+<pre><code>LogFormat &quot;%h %l %u %t\&quot;%r\&quot; %&gt;s %b \&quot;%&#123;Referer&#125;i\&quot;\&quot;%&#123;User-Agent&#125;i\&quot;&quot; combined
+
+LogFormat &quot;%h %l %u %t\&quot;%r\&quot; %&gt;s %b&quot; common
+
+&lt;IfModule logio_module&gt;
+
+  LogFormat &quot;%h %l %u %t\&quot;%r\&quot; %&gt;s %b \&quot;%&#123;Referer&#125;i\&quot;\&quot;%&#123;User-Agent&#125;i\&quot; %I %O&quot; combinedio
+
+&lt;/IfModule&gt;
+</code></pre>
+<p>下面定义问日志，和使用相应的格式为combined</p>
+<pre><code>CustomLog &quot;logs/access_log&quot;combined
+</code></pre>
+
+
+<IfModule alias_module>
+
+<p>ScriptAlias和Alias类似都是在此定义，两者的区别是ScriptAlias是作为服务器的运行文件，而不是发送到客户端的文件</p>
+<pre><code>ScriptAlias /cgi-bin/&quot;/var/www/cgi-bin/&quot;
+</code></pre>
+</IfModule>
+
+<p>&lt;Directory”/var/www/cgi-bin”&gt;</p>
+<pre><code>AllowOverride None
+
+Options None
+
+Require all granted
+</code></pre>
+
+
+<IfModule mime_module>
+
+<p>mime多媒体英特网邮件扩展，这个模块是用来指定内容元数据，选择HTTP响应的映射模式中的URI或文件的元数据值的内容。如mime-type中的类型有语言，字符集，编码方式</p>
+<pre><code>TypesConfig /etc/mime.types
+
+AddType application/x-compress .Z
+
+AddType application/x-gzip .gz .tgz
+
+AddType text/html .shtml
+
+AddOutputFilter INCLUDES .shtml
+</code></pre>
+</IfModule>
+
+<p>下面的设置向text/plain和text/html 资源的content-type报头中添加charset部分。</p>
+<p>AddDefaultCharset UTF-8</p>
+<IfModulemime_magic_module>
+
+<pre><code>MIMEMagicFile conf/magic
+</code></pre>
+
+
+<p>EnableSendfile on</p>
+<p>IncludeOptionalconf.d/*.conf</p>
+<ol start="3">
+<li><p>httpd-2.2版本与httpd-2.4的差别：</p>
+<p> 绝大部分基本是相同的，只不过后者更加趋向于模块化，将主配置文件分割，便于配置和管理下面将说一下具体的差别</p>
+</li>
+</ol>
+<p>（1）ServerTokens指令设置服务器HTTP响应头字段的值。在2.2的版本中有，为了保护服务器免收黑客的攻击，应把服务器回应的消息显示的最不详细为好。</p>
+<p>（2）下面是ServerTokens的一些可能的赋值：<br>ServerTokens Prod 显示“Server: Apache”<br>ServerTokens Major 显示 “Server: Apache/2″<br>ServerTokens Minor 显示“Server: Apache/2.2″<br>ServerTokens Min 显示“Server: Apache/2.2.17″<br>ServerTokens OS 显示 “Server: Apache/2.2.17 (Unix)”<br>ServerTokens Full 显示 “Server: Apache/2.2.17 (Unix) PHP/5.3.5″</p>
+<p>（3）PidFilerun/httpd.pid 保存httpd运行时的进程id，同样是在2.2版本中有</p>
+<p>（4）Keepalive定义，2.2版本放在了主配置文件当中，2.4版本主配置文件没有定义，管理员可以自己定义一个单独配置文件</p>
+<p>（5）prefork的模块定义，在2.2版本中可以直接编辑主配置文件定义prefork模块的相关参数，2.4版本的在专门的模块配置文件当中定义</p>
+<ol start="4">
+<li>其它 配置文件：</li>
+</ol>
+<p>  下面的三个文件分别是主配置文件和辅助配置文件，以及模块配置文件，对主配置文件进行分割方便管理，在重启服务或者重新加载配置文件时会一并加载</p>
+<p>/etc/httpd/conf/httpd.conf </p>
+<p>/etc/httpd/conf.d/*.conf</p>
+<p>/etc/httpd/conf.modules.d/*.conf</p>
+<p>模块的加载格式为：</p>
+<p>LoadModule  模块名  模块存放路径</p>
+<p>UnitFile:/usr/lib/systemd/system/httpd.service   //Unit文件是rhel7之后的版本系统服务脚本启动文件</p>
+<p> 模块文件目录：</p>
+<p>/usr/lib64/httpd/modules/ </p>
+<ol start="5">
+<li><p>站点主服务器根目录默认：/var/www/html</p>
+</li>
+<li><p>日志文件：/var/log/httpd/</p>
+</li>
+</ol>
+<p>error_log 错误日志</p>
+<p>access_log 访问日志</p>
+<ol start="7">
+<li>判断服务正常与否：</li>
+</ol>
+<p>ss -tnlp | grep “:80&gt;”</p>
+<p>systemctl status httpd.service</p>
+<p>五、三种虚拟主机的配置</p>
+<ol>
+<li><p>基于IP地址的虚拟主机：</p>
+<p>在同一台服务器上，有多个IP地址，每一个IP地址负责一台虚拟主机的绑定，每个主机的主机名不一样如<a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a>  <a target="_blank" rel="noopener" href="http://www.vhost2.com,使用较少,因为ip地址较为宝贵,而这种虚拟主机需要大量ip地址./">www.vhost2.com，使用较少，因为IP地址较为宝贵，而这种虚拟主机需要大量IP地址。</a></p>
+</li>
+</ol>
+<p>配置示例：</p>
+<p>（1）  添加多个供虚拟主机使用的IP地址</p>
+<p>[<a href="mailto:&#114;&#x6f;&#111;&#x74;&#64;&#99;&#110;&#111;&#x64;&#101;&#x36;&#x5f;&#x38;&#x63;&#x6f;&#x6e;&#x66;&#x2e;&#100;">&#114;&#x6f;&#111;&#x74;&#64;&#99;&#110;&#111;&#x64;&#101;&#x36;&#x5f;&#x38;&#x63;&#x6f;&#x6e;&#x66;&#x2e;&#100;</a>]# ip a |grep 192  //此时eth2有一个IP地址<br>    inet 192.168.66.142/24 scope global eth2<br>1.<br>2.<br>#使用ip命令添加三个临时IP地址</p>
+<p>[<a href="mailto:&#114;&#111;&#111;&#x74;&#x40;&#99;&#x6e;&#111;&#100;&#101;&#54;&#95;&#x38;&#x63;&#111;&#110;&#x66;&#46;&#x64;">&#114;&#111;&#111;&#x74;&#x40;&#99;&#x6e;&#111;&#100;&#101;&#54;&#95;&#x38;&#x63;&#111;&#110;&#x66;&#46;&#x64;</a>]# ip addr add 192.168.66.143/24 dev eth2<br>[<a href="mailto:&#x72;&#111;&#x6f;&#116;&#x40;&#99;&#x6e;&#x6f;&#100;&#x65;&#x36;&#95;&#56;&#99;&#111;&#x6e;&#102;&#x2e;&#100;">&#x72;&#111;&#x6f;&#116;&#x40;&#99;&#x6e;&#x6f;&#100;&#x65;&#x36;&#95;&#56;&#99;&#111;&#x6e;&#102;&#x2e;&#100;</a>]# ip addr add 192.168.66.144/24 dev eth2<br>[<a href="mailto:&#114;&#x6f;&#x6f;&#x74;&#64;&#99;&#x6e;&#111;&#x64;&#101;&#54;&#x5f;&#x38;&#x63;&#111;&#x6e;&#x66;&#46;&#x64;">&#114;&#x6f;&#x6f;&#x74;&#64;&#99;&#x6e;&#111;&#x64;&#101;&#54;&#x5f;&#x38;&#x63;&#111;&#x6e;&#x66;&#46;&#x64;</a>]# ip addr add 192.168.66.145/24 dev eth2<br>1.<br>2.<br>3.<br>[<a href="mailto:&#x72;&#111;&#x6f;&#x74;&#x40;&#x63;&#110;&#x6f;&#x64;&#x65;&#54;&#x5f;&#56;&#x63;&#x6f;&#x6e;&#x66;&#46;&#x64;">&#x72;&#111;&#x6f;&#x74;&#x40;&#x63;&#110;&#x6f;&#x64;&#x65;&#54;&#x5f;&#56;&#x63;&#x6f;&#x6e;&#x66;&#46;&#x64;</a>]# ip a | grep 192  //通过查看多了3个IP地址<br>    inet 192.168.66.142/24 scope global eth2<br>    inet 192.168.66.143/24 scope globalsecondary eth2<br>    inet 192.168.66.144/24 scope globalsecondary eth2<br>1.<br>2.<br>3.<br>4.<br>（2）添加虚拟主机的配置文件</p>
+<p>[<a href="mailto:&#x72;&#111;&#111;&#116;&#64;&#x63;&#110;&#111;&#x64;&#x65;&#x36;&#95;&#x38;&#x63;&#x6f;&#x6e;&#102;&#x2e;&#x64;">&#x72;&#111;&#111;&#116;&#64;&#x63;&#110;&#111;&#x64;&#x65;&#x36;&#95;&#x38;&#x63;&#x6f;&#x6e;&#102;&#x2e;&#x64;</a>]# pwd<br>/etc/httpd/conf.d<br>[<a href="mailto:&#x72;&#x6f;&#111;&#x74;&#x40;&#x63;&#x6e;&#111;&#100;&#101;&#x36;&#95;&#56;&#x63;&#x6f;&#110;&#x66;&#46;&#100;">&#x72;&#x6f;&#111;&#x74;&#x40;&#x63;&#x6e;&#111;&#100;&#101;&#x36;&#95;&#56;&#x63;&#x6f;&#110;&#x66;&#46;&#100;</a>]# vim virtual.conf</p>
+<p>&lt;VirtualHost 192.168.66.143:80&gt;<br>    ServerName <a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a><br>    DocumentRoot “/testdir/vhost1”<br>    &lt;Directory”/testdir/vhost1”&gt;<br>             AllowOverride none<br>             Allow from all<br>             Order Allow,deny  </p>
+  
+
+
+
+<p>&lt;VirtualHost 192.168.66.144:80&gt;<br>    ServerName <a target="_blank" rel="noopener" href="http://www.vhost2.com/">www.vhost2.com</a><br>    DocumentRoot “/testdir/vhost2”<br>    &lt;Directory”/testdir/vhost2”&gt;<br>             AllowOverride none<br>             Allow from all<br>             Order Allow,deny<br>    <br></p>
+<p>（3）修改/etc/hosts文件（此处不是必须的，因为这里没有DNS服务器解析域名，只好修改hosts文件以供测试！）</p>
+<ol>
+<li><p>[<a href="mailto:&#114;&#111;&#x6f;&#116;&#x40;&#x63;&#x6e;&#111;&#100;&#x65;&#54;&#x5f;&#x38;&#99;&#111;&#x6e;&#x66;&#46;&#x64;">&#114;&#111;&#x6f;&#116;&#x40;&#x63;&#x6e;&#111;&#100;&#x65;&#54;&#x5f;&#x38;&#99;&#111;&#x6e;&#x66;&#46;&#x64;</a>]# grep “^192” /etc/hosts</p>
+</li>
+<li><p>168.66.143  <a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a></p>
+</li>
+<li><p>168.66.144  <a target="_blank" rel="noopener" href="http://www.vhost2.com/">www.vhost2.com</a></p>
+</li>
+<li><p>168.66.145 <a target="_blank" rel="noopener" href="http://www.vhost3.com/">www.vhost3.com</a></p>
+<p>（4）添加相应的目录和文件重启服务测试，添加的目录和文件都因该是配置文件定义的。这里省略这些步骤，测试结果应该为访问相应的域名，会被解析为相应的IP能访问到响应的网页</p>
+</li>
+<li><p>基于域名的虚拟主机：</p>
+</li>
+</ol>
+<p>  在同一台服务器上面，仅有一个IP地址，使用不同的主机名访问不同的网页内容，在虚拟主机块定义上面需要使用NameVirtualHost声明监听的IP地址，使用较多。需要注意在httpd-2.4的版本中不需要使用NameVirtualHost关键字指定监听IP地址和端口号，其余部分没有变化</p>
+<p>（1）修改配置文件</p>
+<p><a href="mailto:&#114;&#x6f;&#111;&#116;&#64;&#x63;&#110;&#111;&#x64;&#x65;&#x36;&#95;&#x38;&#99;&#x6f;&#110;&#x66;&#46;&#100;">&#114;&#x6f;&#111;&#116;&#64;&#x63;&#110;&#111;&#x64;&#x65;&#x36;&#95;&#x38;&#99;&#x6f;&#110;&#x66;&#46;&#100;</a>]# pwd<br>/etc/httpd/conf.d<br>[<a href="mailto:&#x72;&#111;&#x6f;&#116;&#64;&#99;&#110;&#111;&#x64;&#101;&#54;&#x5f;&#56;&#x63;&#111;&#110;&#x66;&#x2e;&#x64;">&#x72;&#111;&#x6f;&#116;&#64;&#99;&#110;&#111;&#x64;&#101;&#54;&#x5f;&#56;&#x63;&#111;&#110;&#x66;&#x2e;&#x64;</a>]# vim virtual.conf<br>NameVirtualHost 192.168.66.142:80 //如果要监听主机所有IP可以使用通配符 *<br><a href="VirtualHost192.168.66.142:80">VirtualHost192.168.66.142:80</a><br>    ServerName<a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a><br>    DocumentRoot “/testdir/vhost1”<br>    &lt;Directory”/testdir/vhost1”&gt;<br>             AllowOverride none<br>             Allow from all<br>             Order Allow,deny<br>    <br></p>
+<p><a href="VirtualHost192.168.66.142:80">VirtualHost192.168.66.142:80</a><br>    ServerName<a target="_blank" rel="noopener" href="http://www.vhost2.com/">www.vhost2.com</a><br>    DocumentRoot “/testdir/vhost2”<br>    &lt;Directory”/testdir/vhost2”&gt;<br>          AllowOverride none<br>          Allow from all<br>          Order Allow,deny<br>    <br></p>
+<p>（2）修改/etc/hosts文件</p>
+<ol>
+<li><p>[root@cnode6_8 conf.d]# grep 192 /etc/hosts</p>
+</li>
+<li><p>168.66.143 <a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a></p>
+</li>
+<li><p>168.66.143 <a target="_blank" rel="noopener" href="http://www.vhost2.com/">www.vhost2.com</a></p>
+<p>（3）测试</p>
+</li>
+</ol>
+<p> 测试时访问不同的域名，虽然是被解析为相同的IP地址，但是能访问到不同的主页</p>
+<ol start="3">
+<li>基于不同端口的虚拟主机：</li>
+</ol>
+<p>  在同一IP，同一主机名下，使用监听不同端口，访问时需要加访问的端口。使用不多，一般用来做内网测试使用</p>
+<p>（1）修改配置文件</p>
+<ol>
+<li><p>[<a href="mailto:&#114;&#x6f;&#x6f;&#x74;&#x40;&#99;&#x6e;&#x6f;&#100;&#x65;&#54;&#x5f;&#x38;&#x63;&#x6f;&#x6e;&#x66;&#46;&#100;">&#114;&#x6f;&#x6f;&#x74;&#x40;&#99;&#x6e;&#x6f;&#100;&#x65;&#54;&#x5f;&#x38;&#x63;&#x6f;&#x6e;&#x66;&#46;&#100;</a>]# cat virtual.conf</p>
+</li>
+<li><p>Listen 8080   //添加监听的端口</p>
+</li>
+<li><p>&lt;VirtualHost 192.168.66.142:8080&gt;</p>
+</li>
+<li><p>​    ServerName <a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a></p>
+</li>
+<li><p>​    DocumentRoot “/testdir/vhost1”</p>
+</li>
+<li><p>​    &lt;Directory”/testdir/vhost1”&gt;</p>
+</li>
+<li><p>​          AllowOverride none</p>
+</li>
+<li><p>​          Allow from all</p>
+</li>
+<li><p>​          Order Allow,deny   </p>
+</li>
+<li><p>​       </p>
+</li>
+<li></li>
+<li><p> &lt;VirtualHost 192.168.66.142:80&gt;</p>
+</li>
+<li><p>​    ServerName <a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a></p>
+</li>
+<li><p>​    DocumentRoot “/testdir/vhost2”</p>
+</li>
+<li><p>​    &lt;Directory”/testdir/vhost2”&gt;</p>
+</li>
+<li><p>​             AllowOverride none</p>
+</li>
+<li><p>​             Allow from all</p>
+</li>
+<li><p>​             Order Allow,deny   </p>
+</li>
+<li><p>​       </p>
+</li>
+<li>
+
+<p>（2）修改/etc/hosts文件</p>
+</li>
+<li><p>[root@cnode6_8 conf.d]# grep 192 /etc/hosts</p>
+</li>
+<li><p>168.66.142 <a target="_blank" rel="noopener" href="http://www.vhost1.com/">www.vhost1.com</a></p>
+<p>  测试要注意默认的端口可以不加，但是非80的端口访问时要手动添加，在访问相同的域名，不同的端口的地址时，同样可以得到不同的网页</p>
+</li>
+</ol>
+<p>六、目录选项指令和站点其他页面定义</p>
+<p>1.目录中常用的指令：</p>
+<p>（1）   options：用于定义资源的展示方式；后跟以空白字符分割的“选项”列表</p>
+<p>（2）   AllowOverRide：httpd允许在网页文档的各目录下使用隐藏文件.htaccess来自个子的访问控制；此指令定义哪些指令可以再.htaccess中定义</p>
+<p>（3）   Require：定义访问控制的用户、组或者IP等的访问</p>
+<p>2.站点主页面文件设置（主配置文件中）：</p>
+<p>DirectoryIndex  filename1 filename2 …</p>
+<p>在DirectoryIndex后面跟多个文件，在访问时每一个目录时默认的页面文件名字，当第一个文件没有找到时，去找第二个文件，文件顺序很重要！</p>
+<p>3.路径别名定义（主配置文件的别名定义模块中定义）</p>
+<p>Alias  /URL/ “/PATH/TO/SOME_DIR/“</p>
+<p>给一个Url定义一个路径别名通过URL可以映射到本地文件系统的目录</p>
+<p>4.status页面</p>
+<p>用于显示当前主机运行状态，子进程或线程运行快照</p>
+<p>&lt;Location /status&gt;</p>
+<pre><code>   SetHandler server-status
+
+   Require all granted
+</code></pre>
+
+
+<p>ExtendedStatus{On|Off} 扩展状态设置，建议关闭，否则影响服务器性能，默认关闭的，没有这一行设置也行，这一行设置是全局设置，不能在虚拟主机中设置。</p>
+<p>七、用户认证和组认证</p>
+<p>   http协议的认证由http协议的实现，对自身进行认证。http的认证可以是明文形式或者是摘要算法形式。在认证时，服务器响应吗为401，拒绝客户端请求，并需要客户端填入账号和密码后进行认证。服务器做认证的账号是虚拟账号，不是服务器系统的账号，可以存放在特定的文件系统中，或者数据库中，连接数据库需要相应的数据库模块为httpd提供接口等支持。表单认证由服务器的应用程序进行认证</p>
+<p>1.http协议的用户认证</p>
+<ol>
+<li>&lt;VirtualHost 192.168.66.142:80&gt;</li>
+<li>ServerName <a target="_blank" rel="noopener" href="http://www.vhost.com/">www.vhost.com</a></li>
+<li>DocumentRoot”/vhosts/www1”</li>
+<li>​    &lt;Directory “/vhosts/www1”&gt;</li>
+<li>​       Options None</li>
+<li>​       AllowOverride None</li>
+<li>​       Require all granted</li>
+<li>​    </li>
+<li>​    &lt;Directory”/vhosts/www1/admin”&gt;</li>
+<li>​       OptionsNone</li>
+<li>​       AllowOverrideNone</li>
+<li>​       AuthTypebasic</li>
+<li>​       AuthName”Admin Area, Enter your name/password”</li>
+<li>​       AuthUserFile”/etc/httpd/conf/.htpasswd”</li>
+<li>​       Requirevalid-user</li>
+<li>​    </li>
+<li>
+使用命令生成文件：</li>
+</ol>
+<p>认证文件：.htpasswd</p>
+<p>htpasswd[OPTIONS]  /PATH/TO/HTPASSWD_FILEUSERNAME [PASSWORD]</p>
+<p> -c：创建文件，没有密码文件时需要加-c，再次添加时不需要</p>
+<p> -m：使用md5</p>
+<p> -s：Force SHA encryption of the password(insecure)</p>
+<p>如需创建jackcui的认证密码：</p>
+<ol>
+<li><p>[root@cnode6_8 conf.d]# htpasswd -c -s/var/www/html/.htpasswd jackcui</p>
+</li>
+<li><p>New password:   //输入该用于的密码</p>
+</li>
+<li><p>Re-type new password:   //再次确认密码</p>
+</li>
+<li><p>Adding password for user jackcui  //提示添加密码成功</p>
+</li>
+</ol>
+<p>   2.http协议的组认证</p>
+<ol>
+<li>&lt;Directory”/vhosts/www1/admin”&gt;</li>
+<li>​    Options None</li>
+<li>​    AllowOverride None</li>
+<li>​    AuthType basic</li>
+<li>​    AuthName “Admin Area, Enter yourname/password”</li>
+<li>​    AuthUserFile”/etc/httpd/conf/.htpasswd”</li>
+<li>​    AuthGroupFIle”/etc/httpd/conf/.htgroup”</li>
+<li>​    Require group </li>
+<li></li>
+</ol>
+<p>组账号文件格式：每行一个组定义：</p>
+<p>group_name: user1 user2 …<br>1.</p>
+<p>八、httpd的访问日志和错误日志：</p>
+<p>   httpd的日志可以定义在主配置文件当中，也可以单独定义在每个虚拟主机中，作用域为定义的虚拟主机的块定义范围之内。主配置文件指向的logs目录是/var/logs/httpd的软链接， 可以自己指定单独的磁盘，提高系统性能。配置要注意文件目录的访问权限</p>
+<ol>
+<li><p>[root@7cnode2 conf.d]# cat virtualhost.conf </p>
+</li>
+<li><p>&lt;VirtualHost 192.168.20.129:80&gt;</p>
+</li>
+<li><p>​    ServerName vhost.jack.com</p>
+</li>
+<li><p>​    DocumentRoot /vhost/vhost1</p>
+</li>
+<li><p>&lt;Directory “/vhost/vhost1”&gt;</p>
+</li>
+<li><p>​    options none</p>
+</li>
+<li><p>​    AllowOverride none</p>
+</li>
+<li><p>​    require all granted</p>
+</li>
+<li></li>
+<li><p>​    ErrorLog “/testdir/vhostlog/error.log”</p>
+</li>
+<li><p>​    CustomLog “/testdir/vhostlog/custom.log”  common</p>
+</li>
+<li>
+
+<p>重启服务在相应的目录生成文件，访问之后便可以记录在文件当中</p>
+</li>
+<li><p>[root@7cnode2 conf.d]# systemctl restart httpd</p>
+</li>
+<li><p>[root@7cnode2 conf.d]# curl vhost.jack.com</p>
+</li>
+<li><p>this is vhost1’s test page</p>
+</li>
+<li><p>[root@7cnode2 conf.d]# tail /testdir/vhostlog/custom.log </p>
+</li>
+<li><p>192.168.20.129 - - [06/Oct/2016:17:36:12 +0800] “GET / HTTP/1.1” 200 27<br>其中日志格式也可以自己定义</p>
+</li>
+</ol>
+<p>&lt;VirtualHost 192.168.20.129:80&gt;<br>        ServerName vhost.jack.com<br>        DocumentRoot /vhost/vhost1<br>&lt;Directory “/vhost/vhost1”&gt;<br>        options none<br>        AllowOverride none<br>        require host 127.0.0.1   //改为仅本机允许访问，可以测试是否能产生错误日志<br><br>        LogFormat “%h %l &quot;%{User-Agent}i&quot;“ myformat  //自己定义的错误日志的格式<br>        ErrorLog “/testdir/vhostlog/error.log”<br>        CustomLog “/testdir/vhostlog/custom.log”  myformat  //定义路径和使用的格式<br><br>[root@7cnode2 conf.d]# systemctl restart httpd<br>[root@7cnode2 conf.d]# cat /testdir/vhostlog/error.log<br>[Thu Oct 06 17:51:23.474098 2016] [authz_host:error] [pid 37261] [client 192.168.20.1:65376] AH01753: access check of ‘127.0.0.1’ to /noindex/css/fonts/Light/OpenSans-Light.ttf failed, reason: unable to get the remote host name, referer: <a target="_blank" rel="noopener" href="http://192.168.20.129/noindex/css/open-sans.css">http://192.168.20.129/noindex/css/open-sans.css</a><br>[Thu Oct 06 17:51:23.474185 2016] [authz_core:error] [pid 37261] [client 192.168.20.1:65376] AH01630: client denied by server configuration: /vhost/vhost1/noindex, referer: <a target="_blank" rel="noopener" href="http://192.168.20.129/noindex/css/open-sans.css">http://192.168.20.129/noindex/css/open-sans.css</a></p>
+<ol>
+<li><p>[root@7cnode2 conf.d]# cat /testdir/vhostlog/custom.log </p>
+</li>
+<li><p>192.168.20.129 - - [06/Oct/2016:17:36:12 +0800] “GET / HTTP/1.1” 200 27</p>
+</li>
+<li><p>192.168.20.129 - “curl/7.29.0”</p>
+</li>
+<li><p>192.168.20.1 - “Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0”</p>
+</li>
+<li><p>192.168.20.1 - “Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0”</p>
+</li>
+<li><p>[root@7cnode2 conf.d]#</p>
+<p>附：访问日志的格式：</p>
+</li>
+</ol>
+<p>LogFormat：用来定义日志格式</p>
+<p>CustomLog：定义访问日志的位置与日志格式。</p>
+<p>常见的格式：</p>
+<p>%h 远程主机的主机名，默认记录的是IP，HostnameLookups是默认off的，如果改为on则服务器要将客户端的ip反解为域名，然后在正解看是否是对应的IP</p>
+<p>%l 用与支持服务器支持验证时，记录远程登录的名字</p>
+<p>%u http协议在建立http请求时协议认证质询实现</p>
+<p>%t 收到请求的时间，格式为[18/Sep/2011:19:18:28 -0400]</p>
+<p>%r 首次请求</p>
+<p>%b 包括http报头在内的请求大小</p>
+<p>%s status，对于内部重定向的请求这是原始的请求状态，使用%&gt;s 记录最终的状态</p>
+<h2 id="VARNAME-i-记录以VARNAME变量为首部的字符串的值。如-Referer-i"><a href="#VARNAME-i-记录以VARNAME变量为首部的字符串的值。如-Referer-i" class="headerlink" title="%{VARNAME}i 记录以VARNAME变量为首部的字符串的值。如%{Referer}i"></a>%{VARNAME}i 记录以VARNAME变量为首部的字符串的值。如%{Referer}i</h2><p>©著作权归作者所有：来自51CTO博客作者黑洞的来客的原创作品，如需转载，请注明出处，否则将追究法律责任<br>由浅入深学习Apache httpd原理与配置<br><a target="_blank" rel="noopener" href="https://blog.51cto.com/jackcui/1858989">https://blog.51cto.com/jackcui/1858989</a></p>
+</IfModulemime_magic_module></IfModulelog_config_module>
+        <p class="suffix-end">__END__</p>
+        <div class="suffix-box">
+            <div class="suffix-box-left">
+                <img src="https://mediaman-share.oss-cn-shanghai.aliyuncs.com/wayne.jpeg" alt="Wayne Blog">
+            </div>
+            <div class="suffix-box-right">
+                <span class="suffix-box-title">文章作者</span>：Wayne Blog
+                <br>
+                <span class="suffix-box-title">文章出处</span>：<a href="/2021/10/14/httpd%E5%8E%9F%E7%90%86%E4%B8%8E%E9%85%8D%E7%BD%AE/" target="_blank">apache-httpd原理与配置</a>
+                <br>
+                <span class="suffix-box-title">作者签名</span>：简单地活着, 肆意又精彩.
+                <br>
+                <span class="suffix-box-title">关于主题</span>：<a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+                <br>
+                <span class="suffix-box-title">版权声明</span>：文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+                <br>
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+    <div class="article-footer">
+        
+        
+        <div class="article-prev-next">
+            
+            
+                <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" class="next-prefix">» </a> 下一篇：    <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" title="发布于 2021-06-29 04:09">linux rsync同步命令</a>
+            
+        </div>
+    </div>
+    
+    <div class="article-comments">
+        <div class="comments-title">
+            评论列表
+        </div>
+        <div class="comments-content">
+        </div>
+    </div>
+
+</div>
+
+    </div>
+</div>
+    <div id="footer"></div>
+    <div id="sidebar">
+    <div class="menu-wrap" style="display:none;">
+        <nav class="menu">
+            <div class="menu-introduce"> 
+                <div class="introduce-avatar"></div> 
+                <div class="introduce-info"> 
+                    <div class="introduce-user"><span></span></div>        
+                </div> 
+            </div> 
+            <div class="menu-list">
+                <ul></ul> 
+            </div> 
+            <div class="menu-link"></div> 
+        </nav>
+        <button class="menu-button-close"></button>
+        <div class="morph-shape" id="morph-shape" data-morph-open="M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none">
+                <path d="M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z"/>
+            </svg>
+        </div>
+    </div>
+    <button class="menu-button-open">MENU</button>
+    <div class="menu-cover"></div>
+</div>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js"></script>
+<div class="search-window">
+    <div class="search-content">
+        <div class="search-content-icon">
+            <i class="iconfont icon-search"></i>
+        </div>
+        <div id="search-input" class="search-input"></div>
+    </div>
+
+    <div class="search-scroll">
+        <div class="search-result">
+            <div id="search-stats" class="search-stats"></div>
+            <div id="search-hits"></div>
+            <div id="search-pagination" class="search-pagination"></div>
+        </div>
+    </div>
+
+    <span class="search-close-icon">
+        <i class="iconfont icon-close"></i>
+    </span>
+</div>
+    <div id="tools">
+    <div class="progressbar-top"></div>
+
+    
+        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/APlayer.css">
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/APlayer.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/Meting.min.js"></script>
+        <meting-js id="3778678" lrcshow="false" server="netease" type="playlist" fixed="true" autoplay="false" loop="all" order="random" preload="auto" volume="0.67" mutex="true"></meting-js>
+    
+    
+    <div class="wrap-right"></div>
+    <div class="loading"></div>
+</div>
+    <script>
+    window.config = {
+        GitHubUserName     : 'first19326',
+        GitHubRepositories : 'Hexo-LiveForCode',
+
+        BlogUser      : 'Wayne Blog',
+        BlogAvatar    : 'https://mediaman-share.oss-cn-shanghai.aliyuncs.com/wayne.jpeg',
+        BlogStartDate : '2021-06-01',
+
+        WebsiteTitleBlur         : '(◍´꒳`◍) Hi, Live For Code',
+        WebsiteTitleBlurTimeOut  : 500,
+        WebsiteTitleFocus        : '(*´∇｀*) 欢迎回来!',
+        WebsiteTitleFocusTimeOut : 1000,
+        WebsiteFavicon           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/logo.png',
+
+        ProgressBar: {
+            id       : 'topProgressBar',
+            color    : '#77B6FF',
+            height   : '2px',
+            duration : 0.2
+        },
+
+        Loading: {
+            rebound: {
+                tension  : 16,
+                friction : 5
+            },
+            spinner: {
+                id     : 'spinner',
+                radius : 90,
+                sides  : 3,
+                depth  : 4,
+                colors : {
+                    background : '#F0F0F0',
+                    stroke     : '#272633',
+                    base       : '',
+                    child      : '#272633'
+                },
+                alwaysForward : true,
+                restAt        : 0.5,
+                renderBase    : false
+            }
+        },
+
+        HomeHeaderAnimationRendered : true,
+        HomeHeaderAnimation         : {
+            radius      : 15,
+            density     : 0.2,
+            color       : 'rgba(255, 255, 255, .2)',
+            clearOffset : 0.3
+        },
+
+        ArticleHeaderAnimationRendered : false,
+        ArticleHeaderAnimation         : {
+            triW                  : 14,
+            triH                  : 20,
+            neighbours            : [
+                
+                    'side',
+                
+                    'top',
+                
+                    'bottom',
+                
+            ],
+            speedTrailAppear      : 0.1,
+            speedTrailDisappear   : 0.1,
+            speedTriOpen          : 1,
+            trailMaxLength        : 30,
+            trailIntervalCreation : 100,
+            delayBeforeDisappear  : 2,
+            colors                : [
+                
+                    '#96EDA6',
+                
+                    '#5BC6A9',
+                
+                    '#38668C',
+                
+                    '#374D84',
+                
+                    '#BED5CB',
+                
+                    '#62ADC6',
+                
+                    '#8EE5DE',
+                
+                    '#304E7B',
+                
+            ]
+        },
+
+        BackAnimationRendered          : true,
+        IEBrowserBackAnimationRendered : false,
+        BackAnimation                  : {
+            colorSaturation  : '60%',
+            colorBrightness  : '50%',
+            colorAlpha       : 0.5,
+            colorCycleSpeed  : 5,
+            verticalPosition : 'random',
+            horizontalSpeed  : 200,
+            ribbonCount      : 3,
+            strokeSize       : 0,
+            parallaxAmount   : -0.2,
+            animateSections  : true
+        },
+
+        HomeHeaderImage : [
+            
+                'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/header/home.jpg',
+            
+                'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/header/home.jpeg',
+            
+        ],
+        HomeBannerText  : '',
+
+        ArticleHeaderImage : [
+            
+                'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/header/article.jpg',
+            
+        ],
+
+        OtherBannerText : '',
+
+        MenuList : [
+            
+                {
+                    name   : '首页',
+                    href   : '/',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '标签',
+                    href   : '/tag',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '分类',
+                    href   : '/category',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '归档',
+                    href   : '/archive',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '赞赏',
+                    href   : '/donate',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '关于',
+                    href   : '/about',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '订阅',
+                    href   : '/atom',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '搜索',
+                    href   : '',    
+                    target : '',
+                    class  : 'search'
+                },
+            
+                {
+                    name   : '留言板',
+                    href   : '/comment',    
+                    target : '',
+                    class  : ''
+                },
+            
+                {
+                    name   : '友情链接',
+                    href   : '/friend',    
+                    target : '',
+                    class  : ''
+                },
+            
+        ],
+        MenuLink : [
+            
+                
+                    {
+                        icon : 'icon-weibo', 
+                        url  : ''
+                    },
+                
+                    {
+                        icon : 'icon-wechat', 
+                        url  : 'https://mediaman-share.oss-cn-shanghai.aliyuncs.com/way.jpeg'
+                    },
+                
+                    {
+                        icon : 'icon-qq', 
+                        url  : 'tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=2300688967&amp;website=www.oicqzone.com'
+                    },
+                
+                    {
+                        icon : 'icon-github', 
+                        url  : 'https://github.com/wayne-ding/wayne-ding.github.io'
+                    },
+                
+            
+        ],
+
+        FooterStyle : 2,
+        BottomText  : {
+            icon    : 'like-fill',
+            left    : '人生若只如初见',
+            right   : '何事秋风悲画扇'
+        },
+        ThemeInfo   : true,
+
+        ConsoleList : [
+            
+                
+                    [
+                        
+                            
+                                'Based on cnblogs theme SimpleMemory.',
+                            
+                                '',
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                'SimpleMemory Author:',
+                            
+                                'BNDong',
+                            
+                        
+                    ],
+                
+                    [
+                        
+                            
+                                'Theme:',
+                            
+                                'LiveForCode',
+                            
+                        
+                    ],
+                
+            
+        ],
+
+        FontIconExtend : '',
+
+        Donate : {
+            paypal  : 'https://paypal.me/wenhuading1?locale.x=zh_XC',
+            bitcoin : '',
+            alipay  : 'https://mediaman-share.oss-cn-shanghai.aliyuncs.com/alipay.png',
+            wechat  : 'https://mediaman-share.oss-cn-shanghai.aliyuncs.com/wechat.png'
+        },
+
+        Code : {
+            style : 'normal'
+        },  
+
+        Search : {
+            applicationID : '010C3EANT8',
+            apiKey        : 'c7abab9f11b79102b9aff7fe6d41447d',
+            indexName     : 'Notes',
+            hits          : {
+                page : 10
+            },
+            labels        : {
+                placeholder : '搜索',
+                empty       : '未发现与 「${query}」 相关的内容',
+                stats       : '${hits} 条相关条目，使用了 ${time} 毫秒',
+            }
+        }, 
+
+        Valine : {
+            switch         : true,
+            el             : '.comments-content',
+            appId          : 'srhKtvWPQTWYKh3qX8G8M7v0-gzGzoHsz',
+            appKey         : '8uVSP1q6UlALVC5igYfIfv2h',
+            placeholder    : '你是我一生只会遇见一次的惊喜...',
+            avatar         : 'mm',
+            meta           : 'nick,mail,link',
+            requiredFields : 'nick,mail',
+            pageSize       : 5,
+            lang           : 'zh-cn',
+            visitor        : true,
+            enableQQ       : true
+        },
+
+        Tocbot : {
+            switch                : true,
+            tocSelector           : '.toc',
+            contentSelector       : '.article-body',
+            headingSelector       : 'h1, h2, h3, h4, h5',
+            headingsOffset        : 0,
+            scrollSmooth          : true,
+            scrollSmoothOffset    : -5,
+            positionFixedSelector : '.toc',
+            positionFixedClass    : 'toc-fixed',
+            fixedSidebarOffset    : '',
+        },
+
+        Require : {
+            baseUrl     : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/',
+            waitSeconds : 100
+        },
+
+        Music : {
+            type : 'Meting'
+        },
+        APlayer : {
+            container : '.aplayer',
+            fixed     : true,
+            autoplay  : true,
+            loop      : 'all',
+            order     : 'random',
+            preload   : 'auto',
+            volume    : 0.67,
+            mutex     : true,
+            lrcType   : 3,
+            audio     : [
+                
+                    {
+                        name   : 'aLIEz',
+                        artist : 'mizuki（瑞葵）',
+                        cover  : '/music/cover/aLIEz.jpg',
+                        url    : '/music/song/aLIEz.mp3',
+                        lrc    : '/music/lrc/aLIEz.lrc'
+                    },
+                
+                    {
+                        name   : 'Endless Tears',
+                        artist : 'CLIFF EDGE',
+                        cover  : '/music/cover/Endless Tears.jpg',
+                        url    : '/music/song/Endless Tears.mp3',
+                        lrc    : '/music/lrc/Endless Tears.lrc'
+                    },
+                
+                    {
+                        name   : 'Miracle',
+                        artist : 'Cascada',
+                        cover  : '/music/cover/Miracle.jpg',
+                        url    : '/music/song/Miracle.mp3',
+                        lrc    : '/music/lrc/Miracle.lrc'
+                    },
+                
+                    {
+                        name   : 'Roll The Dice',
+                        artist : '高珊',
+                        cover  : '/music/cover/Roll The Dice.jpg',
+                        url    : '/music/song/Roll The Dice.mp3',
+                        lrc    : '/music/lrc/Roll The Dice.lrc'
+                    },
+                
+                    {
+                        name   : 'See You Again',
+                        artist : 'Charlie Puth, Wiz Khalifa',
+                        cover  : '/music/cover/See You Again.jpg',
+                        url    : '/music/song/See You Again.mp3',
+                        lrc    : '/music/lrc/See You Again.lrc'
+                    },
+                
+                    {
+                        name   : 'Traveling Light',
+                        artist : 'Joel Hanson, Sara Groves',
+                        cover  : '/music/cover/Traveling Light.jpg',
+                        url    : '/music/song/Traveling Light.mp3',
+                        lrc    : '/music/lrc/Traveling Light.lrc'
+                    },
+                
+                    {
+                        name   : '痴心绝对',
+                        artist : '李圣杰',
+                        cover  : '/music/cover/痴心绝对.jpg',
+                        url    : '/music/song/痴心绝对.mp3',
+                        lrc    : '/music/lrc/痴心绝对.lrc'
+                    },
+                
+                    {
+                        name   : '好想大声说爱你',
+                        artist : 'BAAD（バード）',
+                        cover  : '/music/cover/好想大声说爱你.jpg',
+                        url    : '/music/song/好想大声说爱你.mp3',
+                        lrc    : '/music/lrc/好想大声说爱你.lrc'
+                    },
+                
+            ]
+        },
+        Meting : {
+            id       : '3778678', 
+            lrcshow  : false, 
+            server   : 'netease', 
+            type     : 'playlist', 
+            fixed    : true, 
+            autoplay : false, 
+            loop     : 'all', 
+            order    : 'random', 
+            preload  : 'auto', 
+            volume   : 0.67, 
+            mutex    : true
+        },
+
+        LazyLoad : {
+            default : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/image/website/lazyload.svg'
+        },
+  
+        Style : {
+            aplayer          : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/APlayer.css',
+            archive          : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/archive.css',
+            donate           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/donate.css',
+            fancybox         : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/jquery.fancybox.css',
+            footer           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/footer.css',
+            iconfont         : 'https://at.alicdn.com/t/font_1546312_l3yohatebw.css',
+            index            : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/index.css',
+            menuBubble       : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/menu-bubble.css',
+            page             : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/page.css',
+            post             : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.css',
+            search           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/search.css',
+            tocbot           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/tocbot.css',
+            normal           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/normal.css',
+            night            : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/night.css',
+            clipboard        : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/clipboard.css'
+        },
+
+        Script: {
+            aplayer          : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/APlayer.min.js',
+            config           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.config.js',
+            index            : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/index.js',
+            instantSearch    : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/instantsearch.min.js',
+            jQuery           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js',
+            loading          : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/loading.js',
+            meting           : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/Meting.min.js',
+            iscroll          : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/iscroll.js',
+            require          : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/require.min.js'
+        },
+
+        Font: {
+            LongCang   : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css',
+            Monda      : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css',
+            NotoSansSC : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/NotoSansSC.css',
+            Playball   : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Playball.css',
+            PTMono     : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/PTMono.css',
+            RobotoSlab : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/RobotoSlab.css',
+            Rosario    : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.css',
+            UbuntuMono : 'https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.css'
+        },
+
+        Suffix : {
+            about : '简单地活着, 肆意又精彩.'
+        },
+            
+        Theme : {
+            url  : 'https://github.com/first19326/Hexo-LiveForCode',
+            name : 'Hexo - Live For Code'
+        }  
+    };
+</script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/index.js"></script>
+</body>
+</html>
