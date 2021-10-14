@@ -1,3 +1,5 @@
+http://example.com/2021/10/14/Docker_file/
+http://example.com/2021/10/14/file/
 http://example.com/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/
 http://example.com/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/
 http://example.com/2020/08/01/docker/

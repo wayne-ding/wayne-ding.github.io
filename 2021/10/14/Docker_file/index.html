@@ -6,7 +6,7 @@
     <meta name="referrer" content="origin">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta http-equiv="Cache-Control" content="no-siteapp">
-    <title>Wayne Blog</title>
+    <title>file</title>
 
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css">
@@ -17,215 +17,121 @@
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Rosario.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/UbuntuMono.css">
 
-    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/index.css">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/post.css">
+    
+        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/css/normal.css">
+    
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/js/jquery-3.4.1.min.js"></script>
+
 <meta name="generator" content="Hexo 5.4.0"></head>
 <body>
     <a id="cover"></a>
     <div id="header">
-    <div class="header" >
+    <div class="header">
         <div class="vertical">
             <div class="inner">
-                <h1 class="header-title"></h1>
-                <h2 class="header-description" id="hitokoto"></h2>
-                <h3 class="header-info" id="hitokotoAuthor"></h3>
-                <!--
-                <h1 class="header-subtitle"></h1>
-                <p class="header-subinfo"></p>
-                -->
+                <h1 class="header-subtitle">file</h1>
+                <div class="header-subinfo">
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2021-10-14
+                        </span>
+                        
+                            <span id="/2021/10/14/Docker_file/" class="leancloud_visitors" data-flag-title="file">
+                                <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
+                            </span>
+                        
+                        <span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/10/14/Docker_file/"></span>
+                        </span>  
+                    </p>                 
+                </div>
             </div>
         </div>
-        <a class="scroll-down" href="javascript:;" target="_self" data-offset="-45">
-            <span class="hidden">Scroll Down</span>
-            <i class="scroll-down-icon iconfont icon-return"></i>
-        </a>
+        <canvas id="articleHeaderCanvas"></canvas>
     </div>
 </div>
     <div id="container">
     <div id="content">
-        <div class="articles">
-    
-        <div class="article">
-            <div class="article-title">
-                <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/">zabbix教程</a>
-                
-                    <span class="article-sticky">置顶</span>
-                
+        <div id="article">
+    <div class="toc"></div>
+    <div class="article-body">
+        <p>Docker file简单介绍<br>Docker可以使用Dockerfile的内容来自动构建镜像。Dockerfile也是一个文件，其中有创建镜像、运行指令等一系列的命令，且每行只支持一个运行命令。</p>
+<p>Docker file分为四部分组成：<br>基础镜像信</p>
+<p>维护者信息</p>
+<p>镜像操作指令</p>
+<p>容器启动时执行指令</p>
+<p>dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。</p>
+<p>dockerfile指令有：<br>构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。</p>
+<p>设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。</p>
+<p>Dockerfile指令<br>Dockerfile指令一共有以下种：<br>1、FROM<br>用来指定基础镜像，然后通过在基础镜像上构建新的镜像，基础镜像一般有远程或本地仓库。并且Dockerfile文件第一行必须的FROM指令，如果一个Dockerfile需要创建多个镜像，可以使用多个FROM指令。</p>
+<p>#具体使用用法如下：<br>FROM &lt; image_name &gt;   #默认是latest版本<br>FROM <a href="image:version">image:version</a>  #指定版本<br>2、MAINTAINER<br>指定镜像的创建者信息</p>
+<p>#具体使用法如下：<br>MAINTAINER &lt; name &gt;<br>3、RUN<br>运行所有基础镜像能支持的命令，同样也可以使用多条RUN指令，可以使用\来换行</p>
+<p>#具体使用法如下：<br>RUN &lt; command &gt;<br>RUN [“executable”, “param1”, “param2” … ] (exec form)<br>4、CMD<br>用于容器启动时的指定操作，它可以是命令，也可以是脚本，但只执行一次，如果有多少默认只会执行最后一个。</p>
+<p>#具体使用法如下：<br>CMD [“executable” ,”Param1”, “param2”]使用exec执行，推荐<br>CMD command param1 param2，在/bin/sh上执行<br>CMD [“Param1”, “param2”] 提供给ENTRYPOINT做默认参数。<br>5、EXPOSE<br>指定容器的端口映射（容器与物理机），运行容器时加上-p参数指定EXPOSE设置的端口。EXPOSE可以设置多个端口号，相应地运行容器配套多次使用-p参数。可以通过docker port +容器需要映射的端口号和容器ID来参考宿主机的映射端口。</p>
+<p>#具体使用法如下：<br>EXPOSE <port> [port1 , port2 …………]<br>6、ENV<br>在镜像中用于设置环境变量的，然后RUN命令可以使用此设置的环境变量，在容器启动后也以通过docker inspect查看环境变量，可以通过docker run –env key=value来设置或修改环境变量。</port></p>
+<p>#具体使用法如下：<br>ENV <key> <value><br>ENV JAVA_HOME /usr/local/jdk<br>7、ADD<br>复制指定的源文件、目录、URL到容器的指定目录中。所有拷贝到container中的文件和文件夹权限为0755，uid和gid为0。</value></key></p>
+<p>如果源是一个目录，那么会将该目录下的所有文件添加到container中，不包括目录；</p>
+<p>如果源文件是可识别的压缩格式，则docker会帮忙解压缩（注意压缩格式）；</p>
+<p>如果源是文件且目标目录中不使用斜杠结束，则会将目标目录视为文件，源的内容会写入目标目录；</p>
+<p>如果源是文件且目标目录中使用斜杠结束，则会源文件拷贝到目标目录下。</p>
+<p>#具体使用法如下：<br>ADD &lt;源&gt; &lt;目标&gt;<br>8、COPY<br>复制本地主机的源（默认为Dockerfile所在的目录）到容器中的目标中，目标路径不存在时会自动创建。</p>
+<p>#具体使用法如下：<br>COPY &lt;源&gt; &lt;目标&gt;<br>COPY web/index.html  /var/web/<br>路径必须是绝对路径，如果不存在，会自动创建对应目录</p>
+<p>路径必须是Dockerfile 所在路径的相对路径</p>
+<p>如果是一个目录，只会复制目录下的内容，而目录本身则不会被复制</p>
+<p>9、ENTRYPOINT<br>指定容器启动后执行的命令，多行只执行最后一行。并且不可被docker run提供的参数覆盖。</p>
+<p>#具体使用法如下：<br>ENTRYPOINT “command” “param1” “param2”<br>10、VOLUME<br>创建一个可以从本地主机或其它容器挂载的挂载点，一般用于存放数据。与docker run -v也可以实现此功能。</p>
+<p>#具体使用法如下：<br>VOLUME  [directory_name]<br>VOLUME /docker_data<br>11、USER<br>指定容器运行时使用的用户或UID，后面RUN、CMD、ENTRYPIONT都会使用此用户来运行命令。</p>
+<p>#具体使用法如下：<br>USER [username/uid]<br>12、WORKDIR<br>指定RUN、CMD、ENTRYPIONT指定的命令的运行目录。可以使用多个WORKDIR指令，后续参数如果是相对路径，则会基于之前的命令指定的路径。如：WORKDIR  /data　WORKDIR work。最终的路径就是/data/work。path路径也可以是环境变量。</p>
+<p>#具体使用方法如下：<br>WORKDIR [path]<br>13、ONBUILD<br>配置当前所创建的镜像作为其它新创建镜像的基础镜像时，所执行的操作指令。就是,这个镜像创建后，如果其它镜像以这个镜像为基础，会先执行这个镜像的ONBUILD命令。</p>
+<p>#具体使用法如下：<br>ONBUILD [INSTRUCTION]<br>通过Dockerfile快速构建镜像<br>接下来，我们通过构建一个Tomcat镜像，来演示Dockerfile的使用方法，前提是安装Docker环境，如何安装Docker环境就不在此赘述了。请猛戳下面的文字：</p>
+<p>[root@master tomcat]# ll<br>总用量 190504<br>-rw-r–r– 1 root root   9552281 6月   7 15:07 apache-tomcat-8.5.31.tar.gz<br>-rw-r–r– 1 root root        32 7月   3 09:41 index.jsp<br>-rw-r–r– 1 root root 185515842 9月  20 2017 jdk-8u144-linux-x64.tar.gz<br>[root@master tomcat]# cat index.jsp<br>welcome to mingongge’s web site<br>[root@master tomcat]# pwd<br>/root/docker/tomcat<br>[root@master tomcat]# vim Dockerfile<br>#config file start#<br>FROM centos<br>MAINTAINER mingongge &lt;微信公众号:民工哥技术之路&gt;</p>
+<p>#add jdk and tomcat software<br>ADD jdk-8u144-linux-x64.tar.gz /usr/local/<br>ADD apache-tomcat-8.5.31.tar.gz /usr/local/<br>ADD index.jsp /usr/local/apache-tomcat-8.5.31/webapps/ROOT/</p>
+<p>#config java and tomcat ENV<br>ENV JAVA_HOME /usr/local/jdk1.8.0_144<br>ENV CLASSPATH $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar<br>ENV CATALINA_HOME /usr/local/apache-tomcat-8.5.31/<br>ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/bin</p>
+<p>#config listen port of tomcat<br>EXPOSE 8080</p>
+<p>#config startup command of tomcat<br>CMD /usr/local/apache-tomcat-8.5.31/bin/catalina.sh run</p>
+<p>#end of config-file#<br>构建过程<br>[root@master tomcat]# docker build -t tomcat-web . #这个.不用注释了吧相信懂的人自然懂的<br>Sending build context to Docker daemon 195.1 MB<br>Step 1/11 : FROM centos<br> —&gt; 49f7960eb7e4<br>Step 2/11 : MAINTAINER mingongge &lt;微信公众号:民工哥技术之路&gt;<br> —&gt; Running in afac1e218299<br> —&gt; a404621fac22<br>Removing intermediate container afac1e218299<br>Step 3/11 : ADD jdk-8u144-linux-x64.tar.gz /usr/local/<br> —&gt; 4e22dafc2f76<br>Removing intermediate container b1b23c6f202a<br>Step 4/11 : ADD apache-tomcat-8.5.31.tar.gz /usr/local/<br> —&gt; 1efe59301d59<br>Removing intermediate container aa78d5441a0a<br>Step 5/11 : ADD index.jsp /usr/local/apache-tomcat-8.5.31/webapps/ROOT/<br> —&gt; f09236522370<br>Removing intermediate container eb54e6eb963a<br>Step 6/11 : ENV JAVA_HOME /usr/local/jdk1.8.0_144<br> —&gt; Running in 3aa91b03d2d1<br> —&gt; b497c5482fe0<br>Removing intermediate container 3aa91b03d2d1<br>Step 7/11 : ENV CLASSPATH $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar<br> —&gt; Running in f2649b5069be<br> —&gt; 9cedb218a8df<br>Removing intermediate container f2649b5069be<br>Step 8/11 : ENV CATALINA_HOME /usr/local/apache-tomcat-8.5.31/<br> —&gt; Running in 39ef620232d9<br> —&gt; ccab256164fe<br>Removing intermediate container 39ef620232d9<br>Step 9/11 : ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/bin<br> —&gt; Running in a58944d03d4a<br> —&gt; f57de761a759<br>Removing intermediate container a58944d03d4a<br>Step 10/11 : EXPOSE 8080<br> —&gt; Running in 30681437d265<br> —&gt; b906dcc26584<br>Removing intermediate container 30681437d265<br>Step 11/11 : CMD /usr/local/apache-tomcat-8.5.31/bin/catalina.sh run<br> —&gt; Running in 437790cc642a<br> —&gt; 95204158ee68<br>Removing intermediate container 437790cc642a<br>Successfully built 95204158ee68<br>通过构建的镜像启动容器<br>[root@master tomcat]# docker run -d -p 8080:8080 tomcat-web<br>b5b65bee5aedea2f48edb276c543c15c913166bf489088678c5a44fe9769ef45<br>[root@master tomcat]# docker ps<br>CONTAINER ID   IMAGE        COMMAND                  CREATED        STATUS         PORTS                    NAMES<br>b5b65bee5aed   tomcat-web   “/bin/sh -c ‘/usr/…”   5 seconds ago  Up 4 seconds   0.0.0.0:8080-&gt;8080/tcp   vigilant_heisenberg</p>
+
+        <p class="suffix-end">__END__</p>
+        <div class="suffix-box">
+            <div class="suffix-box-left">
+                <img src="https://mediaman-share.oss-cn-shanghai.aliyuncs.com/wayne.jpeg" alt="Wayne Blog">
             </div>
-            <div class="article-abstract">
-                
+            <div class="suffix-box-right">
+                <span class="suffix-box-title">文章作者</span>：Wayne Blog
+                <br>
+                <span class="suffix-box-title">文章出处</span>：<a href="/2021/10/14/Docker_file/" target="_blank">file</a>
+                <br>
+                <span class="suffix-box-title">作者签名</span>：简单地活着, 肆意又精彩.
+                <br>
+                <span class="suffix-box-title">关于主题</span>：<a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+                <br>
+                <span class="suffix-box-title">版权声明</span>：文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+                <br>
             </div>
-            <div class="clear"></div>
-            <div class="article-info">
-                <span>
-                    <i class="iconfont icon-time"></i> 发表时间：2020-08-01
-                </span>
-                
-                    <span id="/2020/08/01/zabbix超详细的环境搭建和测试/" class="leancloud_visitors" data-flag-title="zabbix教程">
-                        <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
-                    </span>
-                
-                <span>
-                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/08/01/zabbix超详细的环境搭建和测试/"></span>
-                </span>
-            </div>
-            <div class="clear"></div>     
+            <div style="clear: both;"></div>
         </div>
-    
-        <div class="article">
-            <div class="article-title">
-                <a href="/2020/08/01/docker/">docker 教程</a>
-                
-                    <span class="article-sticky">置顶</span>
-                
-            </div>
-            <div class="article-abstract">
-                
-            </div>
-            <div class="clear"></div>
-            <div class="article-info">
-                <span>
-                    <i class="iconfont icon-time"></i> 发表时间：2020-08-01
-                </span>
-                
-                    <span id="/2020/08/01/docker/" class="leancloud_visitors" data-flag-title="docker 教程">
-                        <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
-                    </span>
-                
-                <span>
-                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/08/01/docker/"></span>
-                </span>
-            </div>
-            <div class="clear"></div>     
+    </div>
+    <div class="article-footer">
+        
+        
+        <div class="article-prev-next">
+            
+            
+                <a href="/2021/10/14/file/" class="next-prefix">» </a> 下一篇：    <a href="/2021/10/14/file/" title="发布于 2021-10-14 03:38">file</a>
+            
         </div>
+    </div>
     
-        <div class="article">
-            <div class="article-title">
-                <a href="/2021/10/14/Docker_file/">file</a>
-                
-            </div>
-            <div class="article-abstract">
-                
-            </div>
-            <div class="clear"></div>
-            <div class="article-info">
-                <span>
-                    <i class="iconfont icon-time"></i> 发表时间：2021-10-14
-                </span>
-                
-                    <span id="/2021/10/14/Docker_file/" class="leancloud_visitors" data-flag-title="file">
-                        <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
-                    </span>
-                
-                <span>
-                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/10/14/Docker_file/"></span>
-                </span>
-            </div>
-            <div class="clear"></div>     
+    <div class="article-comments">
+        <div class="comments-title">
+            评论列表
         </div>
-    
-        <div class="article">
-            <div class="article-title">
-                <a href="/2021/10/14/file/">file</a>
-                
-            </div>
-            <div class="article-abstract">
-                
-            </div>
-            <div class="clear"></div>
-            <div class="article-info">
-                <span>
-                    <i class="iconfont icon-time"></i> 发表时间：2021-10-14
-                </span>
-                
-                    <span id="/2021/10/14/file/" class="leancloud_visitors" data-flag-title="file">
-                        <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
-                    </span>
-                
-                <span>
-                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/10/14/file/"></span>
-                </span>
-            </div>
-            <div class="clear"></div>     
+        <div class="comments-content">
         </div>
-    
-        <div class="article">
-            <div class="article-title">
-                <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/">linux rsync同步命令</a>
-                
-            </div>
-            <div class="article-abstract">
-                
-            </div>
-            <div class="clear"></div>
-            <div class="article-info">
-                <span>
-                    <i class="iconfont icon-time"></i> 发表时间：2021-06-29
-                </span>
-                
-                    <span id="/2021/06/29/linux rsync同步命令/" class="leancloud_visitors" data-flag-title="linux rsync同步命令">
-                        <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
-                    </span>
-                
-                <span>
-                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/06/29/linux rsync同步命令/"></span>
-                </span>
-            </div>
-            <div class="clear"></div>     
-        </div>
-    
-        <div class="article">
-            <div class="article-title">
-                <a href="/2020/01/01/software-download/">software download</a>
-                
-            </div>
-            <div class="article-abstract">
-                
-            </div>
-            <div class="clear"></div>
-            <div class="article-info">
-                <span>
-                    <i class="iconfont icon-time"></i> 发表时间：2020-01-01
-                </span>
-                
-                    <span id="/2020/01/01/software-download/" class="leancloud_visitors" data-flag-title="software download">
-                        <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
-                    </span>
-                
-                <span>
-                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/01/01/software-download/"></span>
-                </span>
-            </div>
-            <div class="clear"></div>     
-        </div>
-    
-        <div class="article">
-            <div class="article-title">
-                <a href="/2020/01/01/TCPdump%20%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E8%AF%A6%E8%A7%A3/">TCPdump 网络抓包工具详解</a>
-                
-            </div>
-            <div class="article-abstract">
-                
-            </div>
-            <div class="clear"></div>
-            <div class="article-info">
-                <span>
-                    <i class="iconfont icon-time"></i> 发表时间：2020-01-01
-                </span>
-                
-                    <span id="/2020/01/01/TCPdump 网络抓包工具详解/" class="leancloud_visitors" data-flag-title="TCPdump 网络抓包工具详解">
-                        <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
-                    </span>
-                
-                <span>
-                    <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/01/01/TCPdump 网络抓包工具详解/"></span>
-                </span>
-            </div>
-            <div class="clear"></div>     
-        </div>
-    
-    
+    </div>
+
 </div>
 
     </div>
