@@ -58,7 +58,7 @@
     <div class="toc"></div>
     <div class="article-body">
         <h2 id="linux-rsync同步命令-值得收藏"><a href="#linux-rsync同步命令-值得收藏" class="headerlink" title="linux rsync同步命令(值得收藏)"></a>linux rsync同步命令(值得收藏)</h2><p>GoRustNeverStop 2017-08-09 15:09:38  785  收藏<br>分类专栏： rsync<br>如果你是一位运维工程师，你很可能会面对几十台、几百台甚至上千台服务器，除了批量操作外，环境同步、数据同步也是必不可少的技能。</p>
-<p>说到“同步”，不得不提的利器就是rsync，今天就来说说我从这个工具中看到的同步的艺术。<br><img src="/test/2.png"><br>[不带任何选项]</p>
+<p>说到“同步”，不得不提的利器就是rsync，今天就来说说我从这个工具中看到的同步的艺术。<br><img src="test/2.png" style="zoom:50%;" /><br>[不带任何选项]</p>
 <p>我们经常这样使用rsync：</p>
 <p>复制代码代码如下:</p>
 <p>$ rsync main.c machineB:/home/userB<br>1 只要目的端的文件内容和源端不一样，就会触发数据同步，rsync会确保两边的文件内容一样。<br>2 但rsync不会同步文件的“modify time”，凡是有数据同步的文件，目的端的文件的“modify time”总是会被修改为最新时刻的时间。<br>3 rsync不会太关注目的端文件的rwx权限，如果目的端没有此文件，那么权限会保持与源端一致；如果目的端有此文件，则权限不会随着源端变更。<br>4 只要rsync有对源文件的读权限，且对目标路径有写权限，rsync就能确保目的端文件同步到和源端一致。<br>5 rsync只能以登陆目的端的账号来创建文件，它没有能力保持目的端文件的输主和属组和源端一致。（除非你使用root权限，才有资格要求属主一致、属组一致）</p>
