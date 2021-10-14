@@ -6,7 +6,7 @@
     <meta name="referrer" content="origin">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta http-equiv="Cache-Control" content="no-siteapp">
-    <title>file</title>
+    <title>docker容器技术之docker file</title>
 
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css">
@@ -31,19 +31,19 @@
     <div class="header">
         <div class="vertical">
             <div class="inner">
-                <h1 class="header-subtitle">file</h1>
+                <h1 class="header-subtitle">docker容器技术之docker file</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2021-10-14
+                            <i class="iconfont icon-time"></i> 发表时间：2020-10-01
                         </span>
                         
-                            <span id="/2021/10/14/Docker_file/" class="leancloud_visitors" data-flag-title="file">
+                            <span id="/2020/10/01/Docker_file/" class="leancloud_visitors" data-flag-title="docker容器技术之docker file">
                                 <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                             </span>
                         
                         <span>
-                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/10/14/Docker_file/"></span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/10/01/Docker_file/"></span>
                         </span>  
                     </p>                 
                 </div>
@@ -92,18 +92,19 @@
 <p>#config listen port of tomcat<br>EXPOSE 8080</p>
 <p>#config startup command of tomcat<br>CMD /usr/local/apache-tomcat-8.5.31/bin/catalina.sh run</p>
 <p>#end of config-file#<br>构建过程<br>[root@master tomcat]# docker build -t tomcat-web . #这个.不用注释了吧相信懂的人自然懂的<br>Sending build context to Docker daemon 195.1 MB<br>Step 1/11 : FROM centos<br> —&gt; 49f7960eb7e4<br>Step 2/11 : MAINTAINER mingongge &lt;微信公众号:民工哥技术之路&gt;<br> —&gt; Running in afac1e218299<br> —&gt; a404621fac22<br>Removing intermediate container afac1e218299<br>Step 3/11 : ADD jdk-8u144-linux-x64.tar.gz /usr/local/<br> —&gt; 4e22dafc2f76<br>Removing intermediate container b1b23c6f202a<br>Step 4/11 : ADD apache-tomcat-8.5.31.tar.gz /usr/local/<br> —&gt; 1efe59301d59<br>Removing intermediate container aa78d5441a0a<br>Step 5/11 : ADD index.jsp /usr/local/apache-tomcat-8.5.31/webapps/ROOT/<br> —&gt; f09236522370<br>Removing intermediate container eb54e6eb963a<br>Step 6/11 : ENV JAVA_HOME /usr/local/jdk1.8.0_144<br> —&gt; Running in 3aa91b03d2d1<br> —&gt; b497c5482fe0<br>Removing intermediate container 3aa91b03d2d1<br>Step 7/11 : ENV CLASSPATH $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar<br> —&gt; Running in f2649b5069be<br> —&gt; 9cedb218a8df<br>Removing intermediate container f2649b5069be<br>Step 8/11 : ENV CATALINA_HOME /usr/local/apache-tomcat-8.5.31/<br> —&gt; Running in 39ef620232d9<br> —&gt; ccab256164fe<br>Removing intermediate container 39ef620232d9<br>Step 9/11 : ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/bin<br> —&gt; Running in a58944d03d4a<br> —&gt; f57de761a759<br>Removing intermediate container a58944d03d4a<br>Step 10/11 : EXPOSE 8080<br> —&gt; Running in 30681437d265<br> —&gt; b906dcc26584<br>Removing intermediate container 30681437d265<br>Step 11/11 : CMD /usr/local/apache-tomcat-8.5.31/bin/catalina.sh run<br> —&gt; Running in 437790cc642a<br> —&gt; 95204158ee68<br>Removing intermediate container 437790cc642a<br>Successfully built 95204158ee68<br>通过构建的镜像启动容器<br>[root@master tomcat]# docker run -d -p 8080:8080 tomcat-web<br>b5b65bee5aedea2f48edb276c543c15c913166bf489088678c5a44fe9769ef45<br>[root@master tomcat]# docker ps<br>CONTAINER ID   IMAGE        COMMAND                  CREATED        STATUS         PORTS                    NAMES<br>b5b65bee5aed   tomcat-web   “/bin/sh -c ‘/usr/…”   5 seconds ago  Up 4 seconds   0.0.0.0:8080-&gt;8080/tcp   vigilant_heisenberg</p>
+<p><img src="/2020/10/01/Docker_file/pic_001.png"></p>
 
         <p class="suffix-end">__END__</p>
         <div class="suffix-box">
             <div class="suffix-box-left">
-                <img src="https://mediaman-share.oss-cn-shanghai.aliyuncs.com/wayne.jpeg" alt="Wayne Blog">
+                <img src="https://www.notes.worstone.cn/image/hexo.png" alt="wayne">
             </div>
             <div class="suffix-box-right">
-                <span class="suffix-box-title">文章作者</span>：Wayne Blog
+                <span class="suffix-box-title">文章作者</span>：wayne
                 <br>
-                <span class="suffix-box-title">文章出处</span>：<a href="/2021/10/14/Docker_file/" target="_blank">file</a>
+                <span class="suffix-box-title">文章出处</span>：<a href="https://dingwenhua.net" target="_blank">wayne</a>
                 <br>
-                <span class="suffix-box-title">作者签名</span>：简单地活着, 肆意又精彩.
+                <span class="suffix-box-title">作者签名</span>：快速、简洁且高效的博客框架
                 <br>
                 <span class="suffix-box-title">关于主题</span>：<a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
                 <br>
@@ -115,11 +116,28 @@
     </div>
     <div class="article-footer">
         
+            <div class="category">
+                分类：
+                
+                    <a href="/categories/software/">software</a>
+                
+            </div>
+        
+        
+            <div class="tag">
+                标签：
+                
+                    <a href="/tags/software/">software</a>
+                
+            </div>
         
         <div class="article-prev-next">
             
+                <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" class="prev-prefix">« </a> 上一篇：    <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" title="发布于 2021-06-29 04:09">linux rsync同步命令</a>
+                <br>
             
-                <a href="/2021/10/14/file/" class="next-prefix">» </a> 下一篇：    <a href="/2021/10/14/file/" title="发布于 2021-10-14 03:38">file</a>
+            
+                <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" class="next-prefix">» </a> 下一篇：    <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" title="发布于 2020-08-01 12:00">zabbix教程</a>
             
         </div>
     </div>
