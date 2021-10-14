@@ -6,7 +6,7 @@
     <meta name="referrer" content="origin">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta http-equiv="Cache-Control" content="no-siteapp">
-    <title></title>
+    <title>docker 教程</title>
 
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css">
@@ -31,19 +31,19 @@
     <div class="header">
         <div class="vertical">
             <div class="inner">
-                <h1 class="header-subtitle"></h1>
+                <h1 class="header-subtitle">docker 教程</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2021-10-13
+                            <i class="iconfont icon-time"></i> 发表时间：2020-08-01
                         </span>
                         
-                            <span id="/2021/10/13/test/" class="leancloud_visitors" data-flag-title="">
+                            <span id="/2020/08/01/test/" class="leancloud_visitors" data-flag-title="docker 教程">
                                 <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                             </span>
                         
                         <span>
-                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/10/13/test/"></span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/08/01/test/"></span>
                         </span>  
                     </p>                 
                 </div>
@@ -57,23 +57,12 @@
         <div id="article">
     <div class="toc"></div>
     <div class="article-body">
-        <h1 id="打造高逼格、可视化的Docker容器监控系统平台"><a href="#打造高逼格、可视化的Docker容器监控系统平台" class="headerlink" title="打造高逼格、可视化的Docker容器监控系统平台"></a>打造高逼格、可视化的Docker容器监控系统平台</h1><hr>
-<p>title: docker 教程<br>date: 2020-08-01 00:00:00</p>
-<h1 id="文章出处名称"><a href="#文章出处名称" class="headerlink" title="文章出处名称"></a>文章出处名称</h1><p>from: </p>
-<h1 id="文章出处链接"><a href="#文章出处链接" class="headerlink" title="文章出处链接"></a>文章出处链接</h1><p>url: </p>
-<h1 id="文章作者名称"><a href="#文章作者名称" class="headerlink" title="文章作者名称"></a>文章作者名称</h1><p>author:</p>
-<h1 id="文章作者签名"><a href="#文章作者签名" class="headerlink" title="文章作者签名"></a>文章作者签名</h1><p>about: </p>
-<h1 id="文章作者头像"><a href="#文章作者头像" class="headerlink" title="文章作者头像"></a>文章作者头像</h1><p>avatar: </p>
-<h1 id="是否开启评论"><a href="#是否开启评论" class="headerlink" title="是否开启评论"></a>是否开启评论</h1><p>comments: true</p>
-<h1 id="文章标签"><a href="#文章标签" class="headerlink" title="文章标签"></a>文章标签</h1><p>tags: docker</p>
-<h1 id="文章分类"><a href="#文章分类" class="headerlink" title="文章分类"></a>文章分类</h1><p>categories: Web</p>
-<h1 id="文章摘要"><a href="#文章摘要" class="headerlink" title="文章摘要"></a>文章摘要</h1><p>#description: docker 详细教程</p>
-<h1 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h1><h2 id="sticky-10000"><a href="#sticky-10000" class="headerlink" title="sticky: 10000"></a>sticky: 10000</h2><p><img src="/2021/10/13/test/pic_001.jpg"></p>
-<h2 id="为什么需要监控？？"><a href="#为什么需要监控？？" class="headerlink" title="为什么需要监控？？"></a>为什么需要监控？？</h2><h6 id="对于一个物理机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令docker-stats。"><a href="#对于一个物理机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令docker-stats。" class="headerlink" title="对于一个物理机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令docker stats。"></a>对于一个物理机上运行多个容器应用时，容器的运行情况如：<code>CPU使用率、内存使用率、网络状态、磁盘空间</code>等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令<code>docker stats。</code></h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker stats</span><br><span class="line">CONTAINER      CPU %    MEM USAGE / LIMIT    MEM %      NET I/O         BLOCK I/O    PIDS</span><br><span class="line">bd96d72ed9c7   0.04%  14.97 MiB / 7.64 GiB  0.19%    8.22 MB / 805 MB   0 B / 0 B      9</span><br><span class="line">665563143eb7   0.01%  18.12 MiB / 7.64 GiB   0.23%  19.7 MB / 18.5 MB   0 B / 39.4 MB  8</span><br><span class="line">f2304dad5855  0.18%  98.45 MiB / 7.64 GiB   1.26%   1.07 GB / 9.97 MB   0 B / 2.13 GB  9</span><br></pre></td></tr></table></figure>
+        <p><img src="/2020/08/01/test/pic_001.jpg"></p>
+<h1 id="打造高逼格、可视化的Docker容器监控系统平台"><a href="#打造高逼格、可视化的Docker容器监控系统平台" class="headerlink" title="打造高逼格、可视化的Docker容器监控系统平台"></a>打造高逼格、可视化的Docker容器监控系统平台</h1><h2 id="为什么需要监控？？"><a href="#为什么需要监控？？" class="headerlink" title="为什么需要监控？？"></a>为什么需要监控？？</h2><h6 id="对于一个物理机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令docker-stats。"><a href="#对于一个物理机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令docker-stats。" class="headerlink" title="对于一个物理机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令docker stats。"></a>对于一个物理机上运行多个容器应用时，容器的运行情况如：<code>CPU使用率、内存使用率、网络状态、磁盘空间</code>等信息，都是需要去了解的，因此监控是必须的。对于容器的监控方案可谓多种多样，本身自带命令<code>docker stats。</code></h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker stats</span><br><span class="line">CONTAINER      CPU %    MEM USAGE / LIMIT    MEM %      NET I/O         BLOCK I/O    PIDS</span><br><span class="line">bd96d72ed9c7   0.04%  14.97 MiB / 7.64 GiB  0.19%    8.22 MB / 805 MB   0 B / 0 B      9</span><br><span class="line">665563143eb7   0.01%  18.12 MiB / 7.64 GiB   0.23%  19.7 MB / 18.5 MB   0 B / 39.4 MB  8</span><br><span class="line">f2304dad5855  0.18%  98.45 MiB / 7.64 GiB   1.26%   1.07 GB / 9.97 MB   0 B / 2.13 GB  9</span><br></pre></td></tr></table></figure>
 
 <h5 id="今天民工哥要介绍的是一款开源方案cAdvisor-InfluxDB-Grafana。"><a href="#今天民工哥要介绍的是一款开源方案cAdvisor-InfluxDB-Grafana。" class="headerlink" title="今天民工哥要介绍的是一款开源方案cAdvisor+InfluxDB+Grafana。"></a>今天民工哥要介绍的是一款开源方案cAdvisor+InfluxDB+Grafana。</h5><h2 id="组件简介"><a href="#组件简介" class="headerlink" title="组件简介"></a>组件简介</h2><h4 id="cAdvisor：用于数据采集"><a href="#cAdvisor：用于数据采集" class="headerlink" title="cAdvisor：用于数据采集"></a>cAdvisor：用于数据采集</h4><p>cadvisor谷歌公司自己用来监控他们基础设施的一款工具，这个工具厉害之处不仅能监控docker容器的实时信息，而且还能将你的cadvisor这容器所在的主机的系统的实时信息，但是由于cadvisor只是能监控到实时的信息而不能保存。</p>
 <hr>
-<h3 id="InfluxDB：用于数据存储"><a href="#InfluxDB：用于数据存储" class="headerlink" title="InfluxDB：用于数据存储"></a>InfluxDB：用于数据存储</h3><p><img src="/2021/10/13/test/pic_002.jpg"></p>
+<h3 id="InfluxDB：用于数据存储"><a href="#InfluxDB：用于数据存储" class="headerlink" title="InfluxDB：用于数据存储"></a>InfluxDB：用于数据存储</h3><p><img src="/2020/08/01/test/pic_002.jpg"></p>
 <p>InfluxDB 是用Go语言编写的一个开源分布式时序、事件和指标数据库，无需外部依赖。所以我们要使用influxdb将这些实时监控到的信息存放起来。</p>
 <h5 id="InfluxDB主要特色功能"><a href="#InfluxDB主要特色功能" class="headerlink" title="InfluxDB主要特色功能"></a>InfluxDB主要特色功能</h5><blockquote>
 <ul>
@@ -120,17 +109,17 @@
 <h5 id="查看容器"><a href="#查看容器" class="headerlink" title="查看容器"></a>查看容器</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# docker ps</span><br><span class="line">CONTAINER ID      IMAGE          COMMAND      CREATED           STATUS                   PORTS                      NAMES</span><br><span class="line">f2304dad5855   tutum/influxdb   &quot;/run.sh&quot;   4 seconds ago   Up 4 seconds  0.0.0.0:8083-&gt;8083/tcp, 0.0.0.0:8086-&gt;8086/tcp   influxdb</span><br></pre></td></tr></table></figure>
 
 <p>现在可以通过浏览器去访问influxdb的管理端了</p>
-<p><img src="/2021/10/13/test/pic_003.jpg"></p>
+<p><img src="/2020/08/01/test/pic_003.jpg"></p>
 <p>接下来创建cadvisor的数据库与用户，这个用于后期配置granfa</p>
-<p><img src="/2021/10/13/test/pic_004.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_004.jpg" alt="图片"></p>
 <p>回车直接创建完成如下图</p>
-<p><img src="/2021/10/13/test/pic_005.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_005.jpg" alt="图片"></p>
 <p>创建管理用户</p>
-<p><img src="/2021/10/13/test/pic_006.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_006.jpg" alt="图片"></p>
 <p>创建完成如下图</p>
-<p><img src="/2021/10/13/test/pic_007.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_007.jpg" alt="图片"></p>
 <p>同时也是可以使用CLI命令行界面来创建的，命令一样</p>
-<p><img src="/2021/10/13/test/pic_008.png" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_008.png" alt="图片"></p>
 <h3 id="2、布署cadvisor服务"><a href="#2、布署cadvisor服务" class="headerlink" title="2、布署cadvisor服务"></a>2、布署cadvisor服务</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# docker run -d \</span><br><span class="line">--name=cadvisor \</span><br><span class="line">-p 8082:8080 \</span><br><span class="line">-v /:/rootfs,ro \</span><br><span class="line">-v /var/run:/var/run \</span><br><span class="line">-v /sys:/sys,ro \</span><br><span class="line">-v /var/lib/docker/:/var/lib/docker,ro \</span><br><span class="line">google/cadvisor \</span><br><span class="line">-storage_driver=influxdb \</span><br><span class="line">-storage_driver_db=cadvisor \</span><br><span class="line">-storage_driver_host=influxdb:8086</span><br><span class="line">Unable to find image &#x27;google/cadvisor:latest&#x27; locally</span><br><span class="line">Trying to pull repository docker.io/google/cadvisor ... </span><br><span class="line">latest: Pulling from docker.io/google/cadvisor</span><br><span class="line">ab7e51e37a18: Pull complete </span><br><span class="line">a2dc2f1bce51: Pull complete </span><br><span class="line">3b017de60d4f: Pull complete </span><br><span class="line">Digest: sha256:9e347affc725efd3bfe95aa69362cf833aa810f84e6cb9eed1cb65c35216632a</span><br><span class="line">Status: Downloaded newer image for docker.io/google/cadvisor:latest</span><br><span class="line">a212dc33c9424b6e36485334511e6317bdebc06977b9af374b81b0cab113e724</span><br></pre></td></tr></table></figure>
 
 <h5 id="说明：-1"><a href="#说明：-1" class="headerlink" title="说明："></a>说明：</h5><blockquote>
@@ -146,30 +135,30 @@
 <h5 id="查看cadvisor容器："><a href="#查看cadvisor容器：" class="headerlink" title="查看cadvisor容器："></a>查看cadvisor容器：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# docker ps</span><br><span class="line">CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                   NAMES</span><br><span class="line">a212dc33c942        google/cadvisor     &quot;/usr/bin/cadvisor...&quot;   2 minutes ago       Up 2 minutes        0.0.0.0:8082-&gt;8080/tcp                 cadvisor</span><br></pre></td></tr></table></figure>
 
 <p>现在可以通过浏览访问cadisor的管理页面</p>
-<p><img src="/2021/10/13/test/pic_009.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_009.jpg" alt="图片"></p>
 <p>cadvisor的基础图形功能也酷炫的</p>
-<p><img src="/2021/10/13/test/pic_010.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_010.jpg" alt="图片"></p>
 <p>测试是否写入influxdb数据库</p>
-<p><img src="/2021/10/13/test/pic_011.png" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_011.png" alt="图片"></p>
 <h2 id="3、布署granafa"><a href="#3、布署granafa" class="headerlink" title="3、布署granafa"></a>3、布署granafa</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# docker run -d --name grafana -p 3000:3000 grafana/grafana</span><br><span class="line">Unable to find image &#x27;grafana/grafana:latest&#x27; locally</span><br><span class="line">Trying to pull repository docker.io/grafana/grafana ... </span><br><span class="line">latest: Pulling from docker.io/grafana/grafana</span><br><span class="line">f2aa67a397c4: Pull complete </span><br><span class="line">89573effc7c8: Pull complete </span><br><span class="line">b55c103da375: Pull complete </span><br><span class="line">Digest: sha256:364bec4a39ecbec744ea4270aae35f6554eb6f2047b3ee08f7b5f1134857c32c</span><br><span class="line">Status: Downloaded newer image for docker.io/grafana/grafana:latest</span><br><span class="line">665563143eb74e5e2e76b7a1533cbf67a68590d355b0b22d453eac07e0e0b616</span><br><span class="line">[root@master ~]# docker ps</span><br><span class="line">CONTAINER ID      IMAGE             COMMAND        CREATED          STATUS              PORTS                  NAMES</span><br><span class="line">665563143eb7  grafana/grafana       &quot;/run.sh&quot;   48 seconds ago    Up 47 seconds    0.0.0.0:3000-&gt;3000/tcp     grafana</span><br></pre></td></tr></table></figure>
 
 <p>访问WEB管理端</p>
-<p><img src="/2021/10/13/test/pic_012.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_012.jpg" alt="图片"></p>
 <p><strong>用户名：密码 admin:admin</strong></p>
 <p>添加数据源</p>
-<p><img src="/2021/10/13/test/pic_013.jpg" alt="图片"></p>
-<p><img src="/2021/10/13/test/pic_014.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_013.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_014.jpg" alt="图片"></p>
 <p><strong>之后保存并测试连接</strong></p>
 <p>新建New dashboard</p>
-<p><img src="/2021/10/13/test/pic_015.jpg" alt="图片"></p>
-<p><img src="/2021/10/13/test/pic_016.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_015.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_016.jpg" alt="图片"></p>
 <p>这里随便选择一个容器做为测试使用，实际环境可根据实际环境填写</p>
-<p><img src="/2021/10/13/test/pic_017.jpg" alt="图片"></p>
-<p><img src="/2021/10/13/test/pic_018.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_017.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_018.jpg" alt="图片"></p>
 <p>保存返回到HOME界面后，如下图</p>
-<p><img src="/2021/10/13/test/pic_019.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_019.jpg" alt="图片"></p>
 <p>最终的效果图如下</p>
-<p><img src="/2021/10/13/test/pic_020.jpg" alt="图片"></p>
+<p><img src="/2020/08/01/test/pic_020.jpg" alt="图片"></p>
 
         <p class="suffix-end">__END__</p>
         <div class="suffix-box">
@@ -179,7 +168,7 @@
             <div class="suffix-box-right">
                 <span class="suffix-box-title">文章作者</span>：Wayne Blog
                 <br>
-                <span class="suffix-box-title">文章出处</span>：<a href="/2021/10/13/test/" target="_blank"></a>
+                <span class="suffix-box-title">文章出处</span>：<a href="/2020/08/01/test/" target="_blank">docker 教程</a>
                 <br>
                 <span class="suffix-box-title">作者签名</span>：简单地活着, 肆意又精彩.
                 <br>
@@ -193,11 +182,28 @@
     </div>
     <div class="article-footer">
         
+            <div class="category">
+                分类：
+                
+                    <a href="/categories/Web/">Web</a>
+                
+            </div>
+        
+        
+            <div class="tag">
+                标签：
+                
+                    <a href="/tags/docker/">docker</a>
+                
+            </div>
         
         <div class="article-prev-next">
             
+                <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" class="prev-prefix">« </a> 上一篇：    <a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" title="发布于 2020-08-01 12:00">zabbix教程</a>
+                <br>
             
-                <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" class="next-prefix">» </a> 下一篇：    <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" title="发布于 2021-06-29 04:09">linux rsync同步命令</a>
+            
+                <a href="/2020/01/01/software-download/" class="next-prefix">» </a> 下一篇：    <a href="/2020/01/01/software-download/" title="发布于 2020-01-01 12:00">software download</a>
             
         </div>
     </div>
