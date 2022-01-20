@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://example.com/2021/01/19/nginx/</loc>
+    <lastmod>2022-01-19</lastmod>
+  </url>
+  <url>
     <loc>http://example.com/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/</loc>
     <lastmod>2022-01-19</lastmod>
   </url>

@@ -6,7 +6,7 @@
     <meta name="referrer" content="origin">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta http-equiv="Cache-Control" content="no-siteapp">
-    <title>zabbix教程</title>
+    <title>web运维篇</title>
 
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/LongCang.css">
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/first19326/cdn@master/static/font/Monda.css">
@@ -31,19 +31,19 @@
     <div class="header">
         <div class="vertical">
             <div class="inner">
-                <h1 class="header-subtitle">zabbix教程</h1>
+                <h1 class="header-subtitle">web运维篇</h1>
                 <div class="header-subinfo">
                     <p class="article-info-text">
                         <span>
-                            <i class="iconfont icon-time"></i> 发表时间：2020-08-01
+                            <i class="iconfont icon-time"></i> 发表时间：2021-01-19
                         </span>
                         
-                            <span id="/2020/08/01/zabbix超详细的环境搭建和测试/" class="leancloud_visitors" data-flag-title="zabbix教程">
+                            <span id="/2021/01/19/nginx/" class="leancloud_visitors" data-flag-title="web运维篇">
                                 <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
                             </span>
                         
                         <span>
-                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2020/08/01/zabbix超详细的环境搭建和测试/"></span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/2021/01/19/nginx/"></span>
                         </span>  
                     </p>                 
                 </div>
@@ -57,59 +57,268 @@
         <div id="article">
     <div class="toc"></div>
     <div class="article-body">
-        <h1 id="一、系统环境准备"><a href="#一、系统环境准备" class="headerlink" title="一、系统环境准备"></a>一、系统环境准备</h1><h3 id="1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件"><a href="#1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件" class="headerlink" title="1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件"></a>1、操作系统Centos7以上版本，注意尽量保证是空系统，没有安装数据库和Apache等中间件</h3><h3 id="2、安装前关闭selinux和firewall-ps-关闭防火墙并设置开机不启动-生产环境慎用，可以选择开放对应的端口，默认为tcp-udp-10050、10051"><a href="#2、安装前关闭selinux和firewall-ps-关闭防火墙并设置开机不启动-生产环境慎用，可以选择开放对应的端口，默认为tcp-udp-10050、10051" class="headerlink" title="2、安装前关闭selinux和firewall #ps:关闭防火墙并设置开机不启动(生产环境慎用，可以选择开放对应的端口，默认为tcp/udp 10050、10051)"></a>2、安装前关闭selinux和firewall #ps:关闭防火墙并设置开机不启动(生产环境慎用，可以选择开放对应的端口，默认为tcp/udp 10050、10051)</h3><ol>
-<li>setenforce 0</li>
-<li>sed -i “s/SELINUX=enforcing/SELINUX=disabled/g” /etc/selinux/config 3. systemctl stop firewalld.service</li>
-<li>systemctl disable firewalld.service<h1 id="二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源"><a href="#二、安装部署zabbix5-0服务端-1、安装配置zabbix专用yum源" class="headerlink" title="二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源"></a>二、安装部署zabbix5.0服务端 1、安装配置zabbix专用yum源</h1>进行这一步之后，/etc/yum.repos.d 目录下会生成 zabbix.repo 文件，即可正常使用zabbix源</li>
-<li>rpm -Uvh <a target="_blank" rel="noopener" href="https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm">https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm</a><pre><code> 1. yum clean all
+        <h2 id="web运维篇介绍"><a href="#web运维篇介绍" class="headerlink" title="web运维篇介绍"></a>web运维篇介绍</h2><h1 id="1-安装篇"><a href="#1-安装篇" class="headerlink" title="1. 安装篇"></a>1. 安装篇</h1><h2 id="1-1-apache"><a href="#1-1-apache" class="headerlink" title="1.1 apache"></a>1.1 apache</h2><h2 id="LAMP-安装"><a href="#LAMP-安装" class="headerlink" title="LAMP 安装"></a>LAMP 安装</h2><h3 id="yum安装"><a href="#yum安装" class="headerlink" title="yum安装"></a>yum安装</h3><pre><code>yum -y install httpd mysql-server php php-mysql
 </code></pre>
-</li>
-<li>yum makecache fast<h3 id="2、安装zabbix服务端组件"><a href="#2、安装zabbix服务端组件" class="headerlink" title="2、安装zabbix服务端组件"></a>2、安装zabbix服务端组件</h3></li>
-<li>yum -y install zabbix-server-mysql zabbix-web-mysql zabbix-get<br>会比较慢，耐心等待即可<h3 id="3、安装zabbix前端组件"><a href="#3、安装zabbix前端组件" class="headerlink" title="3、安装zabbix前端组件"></a>3、安装zabbix前端组件</h3></li>
-<li>yum -y install centos-release-scl<br>//这个过程需要从zabbix服务器下载组件，<br>编辑配置文件 /etc/yum.repos.d/zabbix.repo，找到下图所示字段，并设置为1(1-启用;0-不启用)启用前端，保存并 退出文件</li>
-<li>vi /etc/yum.repos.d/zabbix.repo<h3 id="4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页"><a href="#4、安装zabbix前端页面、初始数据库、PHP及httpd组件-分区-Centos7-安装部署zabbix5-0服务端-超详细图文步骤-的第-1-页" class="headerlink" title="4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页"></a>4、安装zabbix前端页面、初始数据库、PHP及httpd组件 分区 Centos7 安装部署zabbix5.0服务端 超详细图文步骤 的第 1 页</h3></li>
-<li>yum -y install zabbix-web-mysql-scl zabbix-apache-conf-scl //这个过程需要从zabbix服务器下载组件，会比 较慢，耐心等待即可<h1 id="三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"><a href="#三、安装并配置MySQL数据库-1、安装配置MySQL专用yum源，以便使用yum方式安装数据库" class="headerlink" title="三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库"></a>三、安装并配置MySQL数据库 1、安装配置MySQL专用yum源，以便使用yum方式安装数据库</h1></li>
-<li>rpm -ivh <a target="_blank" rel="noopener" href="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm">https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm</a> 2、安装MySQL数据库组件</li>
-<li>yum -y install yum-utils</li>
-<li>yum-config-manager –disable mysql80-community</li>
-<li>yum-config-manager –enable mysql57-community</li>
-<li>yum install mysql-community-server -y //这个过程需要从MySQL服务器下载组件，会比较慢，耐心等待即 可<h3 id="3、运行MySQL并设置开机自启动"><a href="#3、运行MySQL并设置开机自启动" class="headerlink" title="3、运行MySQL并设置开机自启动"></a>3、运行MySQL并设置开机自启动</h3></li>
-<li>systemctl start mysqld //首次启动MySQL比较慢，耐心等待即可</li>
-<li>systemctl enable mysqld<h3 id="4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"><a href="#4、数据库初始配置，设置添加zabbix相关账户密码及数据库-从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码" class="headerlink" title="4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码"></a>4、数据库初始配置，设置添加zabbix相关账户密码及数据库 从MySQL安装日志中查看临时root密码，登录数据库，并设置root密码</h3></li>
-<li>grep ‘temporary password’ /var/log/mysqld.log</li>
-<li>mysql -uroot -p’t8H/Dsf2FP0h’ //这里要将刚才查到的临时密码用英文格式单引号引起来</li>
-<li>ALTER USER ‘root‘@’localhost’ IDENTIFIED BY ‘123456@Ab’; 员root密码，自行设置即可</li>
-<li>create database zabbix character set utf8 collate utf8_bin;</li>
-<li>create user zabbix@localhost identified by ‘Zabbix@123’; （单引号内修改为自己设置的密码)</li>
-<li>grant all privileges on zabbix.* to zabbix@localhost; 管理权限</li>
-<li>quit; //退出数据库命令行<br>//单引号内为需要设置的MySQL超级管理 //创建zabbix数据库<br>//创建zabbix数据库用户，并设置密码(单 //设置zabbix用户对zabbix数据库具有本地</li>
-</ol>
-<h3 id="6、导入zabbix初始数据库"><a href="#6、导入zabbix初始数据库" class="headerlink" title="6、导入zabbix初始数据库"></a>6、导入zabbix初始数据库</h3><ol>
-<li>zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p‘Zabbix@123’ zabbix //单引号内<br>为刚才设置的zabbix数据库用户密码，这一步耗时比较长，耐心等待即可<h1 id="四、zabbix配置初始化-1、配置数据库连接信息"><a href="#四、zabbix配置初始化-1、配置数据库连接信息" class="headerlink" title="四、zabbix配置初始化 1、配置数据库连接信息"></a>四、zabbix配置初始化 1、配置数据库连接信息</h1>编辑配置文件 /etc/zabbix/zabbix_server.conf，找到以下字段，去掉前面的#号，填入正确的zabbix数据库连接信息，保 存并退出文件</li>
-<li>DBHost=localhost</li>
-<li>DBName=zabbix</li>
-<li>DBUser=zabbix</li>
-<li>DBPassword=Zabbix@123<h3 id="2、配置时区信息"><a href="#2、配置时区信息" class="headerlink" title="2、配置时区信息"></a>2、配置时区信息</h3>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf，找到php_value[date.timezone] =<br>号，并填入上海时区</li>
-<li>php_value[date.timezone] = Asia/Shanghai<h3 id="3、配置字体，避免前台监控图形中文乱码"><a href="#3、配置字体，避免前台监控图形中文乱码" class="headerlink" title="3、配置字体，避免前台监控图形中文乱码"></a>3、配置字体，避免前台监控图形中文乱码</h3></li>
-<li>yum -y install wqy-microhei-fonts</li>
-<li>mv /usr/share/fonts/dejavu/DejaVuSans.ttf /usr/share/fonts/dejavu/DejaVuSans.ttf.bak</li>
-<li>cp -f /usr/share/fonts/wqy-microhei/wqy-microhei.ttc /usr/share/fonts/dejavu/DejaVuSans.ttf<h3 id="4、启动zabbix相关服务并设置开机自启动"><a href="#4、启动zabbix相关服务并设置开机自启动" class="headerlink" title="4、启动zabbix相关服务并设置开机自启动"></a>4、启动zabbix相关服务并设置开机自启动</h3></li>
-<li>systemctl restart zabbix-server httpd rh-php72-php-fpm</li>
-<li>systemctl enable zabbix-server httpd rh-php72-php-fpm 5、浏览器上访问前端，进行初始化安装<br>访问<a target="_blank" rel="noopener" href="http://ip/zabbix%EF%BC%8C%E8%BF%9B%E5%85%A5%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AE%89%E8%A3%85%E7%95%8C%E9%9D%A2">http://ip/zabbix，进入初始化安装界面</a></li>
-</ol>
-<p>这一步结束后，初始化完成，并进入登录界面，默认用户名是Admin，密码是zabbix，登录后请及时修改密码<br> 进入系统后，默认是英文显示，点击左下角User settings，设置语言为中文即可<br>到此，zabbix5.0的服务器搭建完成，服务已经正常运行，如果要管理客户机，还需要在客户机安装agent，具体安装方法请点击:<a target="_blank" rel="noopener" href="https://mediaman-my.sharepoint.cn/:b:/g/personal/wayne_ding_mediaman_com_cn/EWDHmesIs2FClr5nJLVHXcYBGScapZ4iTXEOz0ZPOaq0CA?e=hfmb0Q">安装zabbix-agent客户端并在zabbix平台添加客户机</a></p>
+<h3 id="源码包安装"><a href="#源码包安装" class="headerlink" title="源码包安装"></a>源码包安装</h3><p>获取apache</p>
+<pre><code>wget http://httpd.apache.org/[preferred]/httpd/httpd-2.4.10.tar.gz
+</code></pre>
+<p>安装编译依赖包apr、apr-util、pcre</p>
+<pre><code>#####install apr
+[wayne ~]# wget http://mirrors.cnnic.cn/apache/apr/apr-1.5.1.tar.gz
+[[email protected] ~]# tar xvf apr-1.5.1.tar.gz 
+[[email protected] ~]# cd apr-1.5.1
+[[email protected] apr-1.5.1]# ./configure --prefix=/app/apr
+[[email protected] apr-1.5.1]# make &amp;&amp; make install
+#####install apr-util
+[[email protected] ~]# wget http://mirrors.cnnic.cn/apache//apr/apr-util-1.5.4.tar.gz
+[[email protected] ~]# tar xvf apr-util-1.5.4.tar.gz 
+[[email protected] ~]# cd apr-util-1.5.4
+[[email protected] apr-util-1.5.4]# ./configure --prefix=/app/apr-util --with-apr=/app/apr
+[[email protected] apr-util-1.5.4]# make &amp;&amp; make install`
+
+#####install pcre
+[[email protected] ~]# wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.36.tar.gz
+[[email protected] ~]# tar xvf pcre-8.36.tar.gz 
+[[email protected] ~]# cd pcre-8.36
+[[email protected] pcre-8.36]# ./configure --prefix=/app/pcre
+[[email protected] pcre-8.36]# make &amp;&amp; make install`
+</code></pre>
+<p>编译安装apache</p>
+<pre><code>[email protected] ~]# tar xvf httpd-2.4.10.tar.gz 
+[[email protected] ~]# cd httpd-2.4.10
+[[email protected] httpd-2.4.10]# ./configure --prefix=/app/apache --with-apr=/app/apr --with-apr-util=/app/apr-util --with-pcre=/app/pcre/
+[[email protected] httpd-2.4.10]# make &amp;&amp; make install`
+</code></pre>
+<h1 id="1-2-nginx"><a href="#1-2-nginx" class="headerlink" title="1.2 nginx"></a>1.2 nginx</h1><h2 id="nginx-php"><a href="#nginx-php" class="headerlink" title="nginx+php"></a>nginx+php</h2><p>centos 6 安装源</p>
+<pre><code>rpm -ivh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.
+</code></pre>
+<p>el6.ngx.noarch.rpm</p>
+<p>yum安装</p>
+<pre><code>yum -y install nginx php-fpm php-mysql mysql-server
+</code></pre>
+<h2 id="源码包安装-1"><a href="#源码包安装-1" class="headerlink" title="源码包安装"></a>源码包安装</h2><p>安装编译依赖包</p>
+<pre><code>yum -y install gcc gcc-c++ autoconf automake  zlib zlib-devel openssl openssl-devel pcre-devel
+</code></pre>
+<p>获取nginx</p>
+<pre><code>wget http://nginx.org/download/nginx-1.7.7.tar.gz
+</code></pre>
+<p>编译安装</p>
+<pre><code>[[email protected] ~]# tar xvf nginx-1.7.7.tar.gz
+[[email protected] ~]# cd nginx-1.7.7
+[[email protected] nginx-1.7.7]# ./configure --prefix=/app/nginx/
+[[email protected] nginx-1.7.7]# make &amp;&amp; make install
+</code></pre>
+<h1 id="2-应用篇"><a href="#2-应用篇" class="headerlink" title="2. 应用篇"></a>2. 应用篇</h1><h2 id="2-1-基本设置"><a href="#2-1-基本设置" class="headerlink" title="2.1 基本设置"></a>2.1 基本设置</h2><p>apache<br>默认配置文件目录为/etc/http/conf/httpd.conf</p>
+<p>默认网站根目录为/var/www/html</p>
+<p>默认日志目录为/var/log/httpd/</p>
+<pre><code>[[email protected] ~]# cat /var/www/html/index.html 
+this test webserver!
+[[email protected] ~]# service httpd start
+[[email protected] ~]# curl 127.0.0.1
+this test webserver!
+</code></pre>
+<p>apache + php</p>
+<p>默认配置文件</p>
+<pre><code>[[email protected] ~]# ls /etc/php.*
+/etc/php.ini #配置文件
+/etc/php.d:  #引用的配置文件目录
+curl.ini      json.ini    mysql.ini  pdo_mysql.ini   phar.ini     zip.ini
+fileinfo.ini  mysqli.ini  pdo.ini    pdo_sqlite.ini  sqlite3.ini
+</code></pre>
+<p>apache使用php的配置文件，在apache的主配置文件会引入这个目录的所有配置文件。</p>
+<p>/etc/httpd/conf.d/php.conf</p>
+<pre><code>[[email protected] ~]# cat /var/www/html/index.php 
+&lt;?php 
+phpinfo(); 
+?&gt; 
+</code></pre>
+<p>[   [email protected] ~]# service httpd restart<br>访问apache主机，显示php信息则成功。</p>
+<p>PS：请关闭iptables防火墙及selinux。</p>
+<p>nginx<br>默认配置文件目录/etc/nginx/</p>
+<p>主配置文件为/etc/nginx/nginx.conf</p>
+<p>默认网站根目录为/usr/share/nginx/html</p>
+<p>启动nginx</p>
+<p>service nginx start</p>
+<pre><code>[[email protected] ~]# curl 127.0.0.1
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</code></pre>
+<p>使用php请启动php-fpm程序</p>
+<pre><code>[[email protected] ~]# service php-fpm start
+</code></pre>
+<p>编辑配置文件</p>
+<pre><code>[[email protected] ~]# vi /etc/nginx/conf.d/default.conf
+
+location / &#123;
+root   /usr/share/nginx/html;
+index  index.php index.html index.htm;
+&#125;
+
+
+location ~ \.php$ &#123;
+root           html;
+fastcgi_pass   127.0.0.1:9000;
+fastcgi_index  index.php;
+fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html/$fastcgi_script_name;
+include        fastcgi_params;
+&#125;
+
+
+
+[[email protected] ~]# cat /usr/share/nginx/html/index.php 
+&lt;?php 
+phpinfo(); 
+?&gt; 
+[[email protected] ~]# service nginx restart
+</code></pre>
+<p>访问首页显示php信息则成功。</p>
+<h2 id="2-2-虚拟主机"><a href="#2-2-虚拟主机" class="headerlink" title="2.2 虚拟主机"></a>2.2 虚拟主机</h2><p>apache<br>注释主配置文件中的网站根目录</p>
+<pre><code>cat /etc/http/conf/httpd.conf
+</code></pre>
+<p>#DocumentRoot “/var/www/html”</p>
+<pre><code>##虚拟主机配置
+&lt;VirtualHost *:80&gt;
+DocumentRoot /web1
+ServerName web1.com
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:80&gt;
+DocumentRoot /web2
+ServerName web2.com
+&lt;/VirtualHost&gt;
+</code></pre>
+<p>因为nginx主配置文件引入了conf.d目录，我们推荐每个虚拟主机在该目录下创建一个文件。</p>
+<pre><code>[[email protected] ~]# vi /etc/nginx/conf.d/web2.conf
+
+
+server &#123;
+listen       80;
+server_name  web2.com;
+
+location / &#123;
+    root   /web2;
+    index  index.php index.html;
+&#125;
+
+location ~ \.php$ &#123;
+    root           html;
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME  /web2/$fastcgi_script_name;
+    include        fastcgi_params;
+&#125;
+&#125;
+</code></pre>
+<p>创建web目录与测试文件</p>
+<pre><code>[[email protected] ~]# mkdir /web2/
+[[email protected] ~]# cat /web2/index.html 
+this web2.
+</code></pre>
+<p>本地解析添加hosts文件测试</p>
+<pre><code>[[email protected] ~]# cat /etc/hosts
+192.168.1.104 web2.co
+</code></pre>
+<p>重启访问测试 如测试apache则重启apache </p>
+<pre><code>[[email protected] ~]# service nginx restart
+[email protected] ~]# curl web2.com
+this web2.
+</code></pre>
+<h2 id="2-3-SSL配置"><a href="#2-3-SSL配置" class="headerlink" title="2.3 SSL配置"></a>2.3 SSL配置</h2><p>apache<br>安装ssl模块和openssl</p>
+<pre><code>yum -y install mod_ssl openssl
+</code></pre>
+<p>使用openssl签发证书</p>
+<pre><code>openssl genrsa -out server.key 1024 
+openssl req -new -key server.key -out server.csr
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+</code></pre>
+<p>编辑配置文件 /etc/httpd/conf.d/ssl.conf</p>
+<pre><code>SSLCertificateFile /etc/http/ssl/server.crt
+SSLCertificateKeyFile /etc/http/ssl/server.key
+</code></pre>
+<p>重启httpd服务即可。</p>
+<pre><code>nginx
+</code></pre>
+<p>编译安装的时候加入以下参数</p>
+<pre><code>.configure --with-http_ssl_module
+make &amp;&amp; make install
+</code></pre>
+<p>签发证书参考以apache相关内容。</p>
+<p>编辑配置文件 /etc/nginx/conf.d/default.conf</p>
+<pre><code>ssl on; 
+ssl_certificate /etc/nginx/ssl/server.crt; 
+ssl_certificate_key /etc/nginx/ssl/server.key;
+</code></pre>
+<h1 id="2-4-伪静态规则"><a href="#2-4-伪静态规则" class="headerlink" title="2.4 伪静态规则"></a>2.4 伪静态规则</h1><h3 id="Wordpress"><a href="#Wordpress" class="headerlink" title="Wordpress"></a>Wordpress</h3><h3 id="apache"><a href="#apache" class="headerlink" title="apache"></a>apache</h3><pre><code>&lt;IfModule mod_rewrite.c&gt;
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %&#123;REQUEST_FILENAME&#125; !-f
+RewriteCond %&#123;REQUEST_FILENAME&#125; !-d
+RewriteRule . /index.php [L]
+&lt;/IfModule&gt;
+</code></pre>
+<p>nginx</p>
+<h2 id="第一种方法，虽然简单，但location中还有rewrite，会出现问题。"><a href="#第一种方法，虽然简单，但location中还有rewrite，会出现问题。" class="headerlink" title="第一种方法，虽然简单，但location中还有rewrite，会出现问题。"></a>第一种方法，虽然简单，但location中还有rewrite，会出现问题。</h2><pre><code>location / &#123;
+try_files $uri $uri/ /index.php?q=$uri&amp;$args;
+&#125;
+</code></pre>
+<h2 id="第二种方法"><a href="#第二种方法" class="headerlink" title="第二种方法"></a>第二种方法</h2><pre><code>location / &#123;
+if (-d wp-admin)&#123;
+    break;
+&#125;
+if (-f $request_filename/index.html)&#123;
+    rewrite (.*) $1/index.html break;
+&#125;
+if (-f $request_filename/index.php)&#123;
+    rewrite (.*) $1/index.php;
+&#125;
+if (!-f $request_filename)&#123;
+    rewrite (.*) /index.php;
+&#125;
+&#125;
+</code></pre>
+<h3 id="emlog"><a href="#emlog" class="headerlink" title="emlog"></a>emlog</h3><h3 id="apache-1"><a href="#apache-1" class="headerlink" title="apache"></a>apache</h3><p>官方支持伪静态，设置后自动生成。</p>
+<p>nginx</p>
+<pre><code>location / &#123; 
+if (!-e $request_filename) &#123; 
+    rewrite ^/(.+)$ /index.php last; 
+&#125;
+&#125;
+</code></pre>
+<h3 id="typecho"><a href="#typecho" class="headerlink" title="typecho"></a>typecho</h3><h3 id="apache-2"><a href="#apache-2" class="headerlink" title="apache"></a>apache</h3><pre><code>&lt;IfModule mod_rewrite.c&gt; 
+RewriteEngine On 
+RewriteBase / 
+RewriteCond %&#123;REQUEST_FILENAME&#125; !-f 
+RewriteCond %&#123;REQUEST_FILENAME&#125; !-d 
+RewriteRule ^(.*)$ /index.php/$1 [L]
+</code></pre>
+<p>nginx</p>
+<pre><code>location / &#123;
+if (-f $request_filename/index.html) &#123;
+    rewrite (.*) $1/index.html break;
+&#125;
+if (-f $request_filename/index.php) &#123;
+    rewrite (.*) $1/index.php;  
+&#125;
+if (!-f $request_filename) &#123;
+    rewrite (.*) /index.php;
+&#125;
+&#125;
+</code></pre>
 
         <p class="suffix-end">__END__</p>
         <div class="suffix-box">
             <div class="suffix-box-left">
-                <img src="https://mediaman-share.oss-cn-shanghai.aliyuncs.com/wayne.jpeg" alt="Wayne Blog">
+                <img src="https://www.notes.worstone.cn/image/hexo.png" alt="wayne">
             </div>
             <div class="suffix-box-right">
-                <span class="suffix-box-title">文章作者</span>：Wayne Blog
+                <span class="suffix-box-title">文章作者</span>：wayne
                 <br>
-                <span class="suffix-box-title">文章出处</span>：<a href="/2020/08/01/zabbix%E8%B6%85%E8%AF%A6%E7%BB%86%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E6%B5%8B%E8%AF%95/" target="_blank">zabbix教程</a>
+                <span class="suffix-box-title">文章出处</span>：<a href="https://dingwenhua.net" target="_blank">wayne</a>
                 <br>
-                <span class="suffix-box-title">作者签名</span>：简单地活着, 肆意又精彩.
+                <span class="suffix-box-title">作者签名</span>：快速、简洁且高效的博客框架
                 <br>
                 <span class="suffix-box-title">关于主题</span>：<a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
                 <br>
@@ -124,7 +333,7 @@
             <div class="category">
                 分类：
                 
-                    <a href="/categories/Web/">Web</a>
+                    <a href="/categories/web/">web</a>
                 
             </div>
         
@@ -132,17 +341,17 @@
             <div class="tag">
                 标签：
                 
-                    <a href="/tags/zabbix/">zabbix</a>
+                    <a href="/tags/web/">web</a>
                 
             </div>
         
         <div class="article-prev-next">
             
-                <a href="/2020/08/01/docker/" class="prev-prefix">« </a> 上一篇：    <a href="/2020/08/01/docker/" title="发布于 2020-08-01 12:00">docker 教程</a>
+                <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" class="prev-prefix">« </a> 上一篇：    <a href="/2021/06/29/linux%20rsync%E5%90%8C%E6%AD%A5%E5%91%BD%E4%BB%A4/" title="发布于 2021-06-29 04:09">linux rsync同步命令</a>
                 <br>
             
             
-                <a href="/2020/01/01/software-download/" class="next-prefix">» </a> 下一篇：    <a href="/2020/01/01/software-download/" title="发布于 2020-01-01 12:00">software download</a>
+                <a href="/2020/10/01/Docker_file/" class="next-prefix">» </a> 下一篇：    <a href="/2020/10/01/Docker_file/" title="发布于 2020-10-01 12:00">docker容器技术之docker file</a>
             
         </div>
     </div>
